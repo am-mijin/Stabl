@@ -17,6 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        Parse.setApplicationId("JAOx5UEohCCFyKSjNSAL9MT0C5UzRJy9M5QIC4eC", clientKey: "QeSuIbl79JFEUR7eekkhp6TZmHMtI5MS8DQlVeBg")
+       
+        
         return true
     }
 
@@ -36,6 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        quaryFeed()
     }
 
     func applicationWillTerminate(application: UIApplication) {
@@ -44,6 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.saveContext()
     }
 
+  
+    
     // MARK: - Core Data stack
 
     lazy var applicationDocumentsDirectory: NSURL = {
@@ -105,6 +111,75 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 abort()
             }
         }
+    }
+    
+    func quaryFeed(){
+        
+        let query = PFQuery(className:"Feeds")
+        query.findObjectsInBackgroundWithBlock {
+            (objects: [AnyObject]?, error: NSError?) -> Void in
+            
+            if error == nil {
+                // The find succeeded.
+                print("Successfully retrieved \(objects!.count) scores.")
+                
+                // Do something with the found objects
+                if let objects = objects {
+                    
+                    
+                    Global.sharedInstance().feeds.removeAllObjects()
+                    
+                    for object in objects {
+                        print(object.objectId)
+                        
+                            let artistId = 0
+                            //let artistId = object.objectForKey("artistId") as! Int]
+                        
+                            let collectionId = 0
+                            let artistName = object.objectForKey("artistName")as! String
+                            //let collectionId = object.objectForKey("collectionId") as! Int
+                            let collectionName = object.objectForKey("collectionName") as! String
+                            //let trackName = object.objectForKey("trackName") as! String
+                            let trackName = ""
+                            let artistViewUrl = ""
+                            let collectionViewUrl = ""
+                            //let artistViewUrl = object.objectForKey("artistViewUrl") as! String
+                            //let collectionViewUrl = object.objectForKey("collectionViewUrl") as! String
+                            let feedUrl = object.objectForKey("feedUrl") as! String
+                            let artworkUrl100 = object.objectForKey("artworkUrl100") as! String
+                            //let releaseDate = object.objectForKey("releaseDate") as! String
+                            let releaseDate = ""
+                            let country = ""
+                            let primaryGenreName = ""
+                            //let country = object.objectForKey("country") as! String
+                            //let primaryGenreName = object.objectForKey("primaryGenreName") as! String
+                            
+                            
+                            let podcast = Podcast(artistId:artistId,
+                                collectionId:collectionId,
+                                artistName:artistName,
+                                collectionName:collectionName,
+                                trackName:trackName,
+                                artistViewUrl:artistViewUrl,
+                                collectionViewUrl:collectionViewUrl,
+                                feedUrl:feedUrl,
+                                artworkUrl100:artworkUrl100,
+                                releaseDate:releaseDate,
+                                country:country,primaryGenreName:primaryGenreName)
+                        
+                        
+                            Global.sharedInstance().feeds.addObject(podcast)
+                            //print(Global.sharedInstance().feeds)
+                        
+                        
+                    }
+                }
+            } else {
+                // Log details of the failure
+                print("Error: \(error!) \(error!.userInfo)")
+            }
+        }
+        
     }
 
 }

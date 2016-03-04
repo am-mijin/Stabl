@@ -8,8 +8,13 @@
 
 import UIKit
 
+
 class ViewController: UIViewController {
 
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -20,6 +25,17 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBarHidden = true
+    }
+ 
+    @IBAction func addPodcasts(sender: AnyObject) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let navigationController = storyboard.instantiateViewControllerWithIdentifier("SearchNavigationController") as! UINavigationController
+        
+        self.presentViewController(navigationController, animated: true, completion: nil)
+        
+    }
 }
 
