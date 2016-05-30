@@ -10,6 +10,8 @@
 #import "AAPLPlayerView.h"
 #import "Stabl-Swift.h"
 
+#import "Consts.h"
+
 
 // Private properties
 @interface AAPLPlayerViewController ()
@@ -18,12 +20,18 @@
     AVURLAsset *_asset;
     id<NSObject> _timeObserverToken;
     AVPlayerItem *_playerItem;
+    
+    CGPoint originalPoint;
+    CGFloat px;
+    CGFloat py;
+    CGFloat timebarX;
 }
 
 @property AVPlayerItem *playerItem;
 
 @property (readonly) AVPlayerLayer *playerLayer;
 
+@property (nonatomic, strong)UIPanGestureRecognizer *panGestureRecognizer;
 @end
 
 @implementation AAPLPlayerViewController
@@ -35,50 +43,56 @@
 	classes in its class hierarchy.
 */
 static int AAPLPlayerViewControllerKVOContext = 0;
-
--(void)viewDidLayoutSubviews{
-    /*
-    _timebar.frame = CGRectMake(-self.view.frame.size.width ,self.view.frame.size.height -_timebar.frame.size.height ,
-                                self.view.frame.size.width, _timebar.frame.size.height);
-    [self.view addSubview:_timebar];*/
+- (BOOL)canBecomeFirstResponder {
+    return YES;
 }
+
+- (void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear: animated];
+    [self becomeFirstResponder];
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    
+}
+
+
 -(void)viewDidLoad
 {
     
-    _timebar = [[UIView alloc] initWithFrame:CGRectMake(0 - self.view.frame.size.width,
-                                                        self.view.frame.size.height -50,
-                                                        self.view.frame.size.width, 50)];
-    _timebar.backgroundColor =[UIColor colorWithRed:118.0/255.0 green:199.0/255.0 blue:154.0/255.0 alpha:1.0];
-    _timebar.backgroundColor = [UIColor purpleColor];
-    [self.view addSubview:_timebar];
+    [super viewDidLoad];
+    
+    _timeSlider.minimumTrackTintColor = Secondary;
+    _timeSlider.maximumTrackTintColor = [UIColor whiteColor ];
+    [_timeSlider setMinimumTrackImage: [UIImage imageNamed:@"slider_left"] forState: UIControlStateNormal];
+    [_timeSlider setMaximumTrackImage: [UIImage imageNamed:@"slider_right"] forState: UIControlStateNormal];
+    
+    
 }
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+
+- (void)initPlayer {
     
-    /*
-        Update the UI when these player properties change.
-    
-        Use the context parameter to distinguish KVO for our particular observers and not
-        those destined for a subclass that also happens to be observing these properties.
-    */
     [self addObserver:self forKeyPath:@"asset" options:NSKeyValueObservingOptionNew context:&AAPLPlayerViewControllerKVOContext];
     [self addObserver:self forKeyPath:@"player.currentItem.duration" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&AAPLPlayerViewControllerKVOContext];
     [self addObserver:self forKeyPath:@"player.rate" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&AAPLPlayerViewControllerKVOContext];
     [self addObserver:self forKeyPath:@"player.currentItem.status" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&AAPLPlayerViewControllerKVOContext];
-
+    
     self.playerView.playerLayer.player = self.player;
-
+    
     NSURL *url = [NSURL URLWithString:@"http://broadappeal.podomatic.com/enclosure/2016-01-20T16_02_21-08_00.mp3"];
     url = [NSURL URLWithString :[_episode objectForKey: @"link"]];
     NSLog(@"url %@",url);
     _titleLabel.text =  _podcast.collectionName;
     _bigTitleLabel.text =  _podcast.collectionName;
     
+    
+    _subtitleLabel.text = [_episode objectForKey: @"title"];
+    
     _episodeLabel.text =  [_episode objectForKey: @"title"];
     
-  
+    
     NSString* imageUrl= _podcast.artworkUrl100;
-  
+    NSLog(@"_podcast.artworkUrl100 %@",_podcast.artworkUrl100);
+    
+    
     [[ImageLoader sharedLoader] imageForUrl:imageUrl  completionHandler:^(UIImage *image, NSString *url) {
         _imageView.image = image;
         _backgorund.image = image;
@@ -86,78 +100,154 @@ static int AAPLPlayerViewControllerKVOContext = 0;
         
     }];
     
- 
+    /*
+    MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage: _artwork];
+    MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
+    NSMutableDictionary *songInfo = [NSMutableDictionary dictionary];
+  
+    
+    [songInfo setValue:albumArt forKey:MPMediaItemPropertyArtwork];
+    [songInfo setValue:_podcast.collectionName forKey:MPMediaItemPropertyTitle];
+    [songInfo setValue:[_episode objectForKey: @"title"] forKey:MPMediaItemPropertyArtist];
+    
+    
+    infoCenter.nowPlayingInfo = songInfo;
+    */
+    
     
     self.asset = [AVURLAsset assetWithURL:url];
-
+    
     // Use a weak self variable to avoid a retain cycle in the block.
     AAPLPlayerViewController __weak *weakSelf = self;
     _timeObserverToken = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:dispatch_get_main_queue() usingBlock:
-        ^(CMTime time) {
-            weakSelf.timeSlider.value = CMTimeGetSeconds(time);
-            int remain = CMTimeGetSeconds( self.duration) - CMTimeGetSeconds(time);
-            
-            int sec = CMTimeGetSeconds(time);
-            NSString* minstr;
-            NSString* secstr;
-            if (sec/60 <10)
-            {
-                minstr= [NSString stringWithFormat:@"%d",(int)sec/60];
-            }
-            else
-                minstr= [NSString stringWithFormat:@"%d",(int)sec/60];
-            
-            if (sec%60 <10)
-                secstr= [NSString stringWithFormat:@"%d",(int)sec%60];
-            
-            else
-                secstr= [NSString stringWithFormat:@"%d",(int)sec%60];
-            
-            float total = CMTimeGetSeconds( self.duration);
-          
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [UIView animateWithDuration:0.0 animations:^{
-                    
-                    _currentTimeLabel.text = [NSString stringWithFormat:@"%@ : %@",minstr,secstr];
-                   
-                    _remainTimeLabel.text = [NSString stringWithFormat:@"-%@ : %@",minstr,secstr];
-                    float x = sec * (self.view.frame.size.width/total) - self.view.frame.size.width;
-                    _currentTimeLabel.frame = CGRectMake(sec * (self.view.frame.size.width/total) +5,
-                                                _currentTimeLabel.frame.origin.y,
-                                                _currentTimeLabel.frame.size.width,
-                                                _currentTimeLabel.frame.size.height);
-                    
-                    _timebar.frame = CGRectMake(x,
-                                                _timebar.frame.origin.y,
-                                                self.view.frame.size.width, 50);
-                    
-                } completion:^(BOOL finished) {
-                    
-                }];
-            });
-        }];
+                          ^(CMTime time) {
+                              
+                              weakSelf.timeSlider.value = CMTimeGetSeconds(time);
+                              int remain = CMTimeGetSeconds( self.duration) - CMTimeGetSeconds(time);
+                              
+                              int sec = CMTimeGetSeconds(time);
+                              NSString* minstr;
+                              NSString* secstr;
+                              if (sec/60 <10)
+                              {
+                                  minstr= [NSString stringWithFormat:@"0%d",(int)sec/60];
+                              }
+                              else
+                                  minstr= [NSString stringWithFormat:@"%d",(int)sec/60];
+                              
+                              if (sec%60 <10)
+                                  secstr= [NSString stringWithFormat:@"0%d",(int)sec%60];
+                              
+                              else
+                                  secstr= [NSString stringWithFormat:@"%d",(int)sec%60];
+                              
+                              float total = CMTimeGetSeconds( self.duration);
+                              
+                              dispatch_async(dispatch_get_main_queue(), ^{
+                                  [UIView animateWithDuration:0.0 animations:^{
+                                      
+                                      _currentTimeLabel.text = [NSString stringWithFormat:@"%@ : %@",minstr,secstr];
+                                      
+                                      _remainTimeLabel.text = [NSString stringWithFormat:@"-%@ : %@",minstr,secstr];
+                                      
+                                      if(sec * (self.view.frame.size.width/total)  <=
+                                         (self.view.frame.size.width -_currentTimeLabel.frame.size.width + 45))
+                                      {
+                                          _currentTimeLabel.frame = CGRectMake(sec * (self.view.frame.size.width/total) +5,
+                                                                               _currentTimeLabel.frame.origin.y,
+                                                                               _currentTimeLabel.frame.size.width,
+                                                                               _currentTimeLabel.frame.size.height);
+                                      }
+                                      
+                                      
+                                  } completion:^(BOOL finished) {
+                                      
+                                      MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
+                                      NSMutableDictionary *songInfo = [NSMutableDictionary dictionary];
+                                      
+                                      [songInfo setValue:_podcast.collectionName forKey:MPMediaItemPropertyTitle];
+                                      [songInfo setValue:[_episode objectForKey: @"title"] forKey:MPMediaItemPropertyArtist];
+                                                                     
+                                      float total = CMTimeGetSeconds( self.duration);
+                                      [songInfo setValue:[NSNumber numberWithFloat:total] forKey:MPMediaItemPropertyPlaybackDuration];
+                                      
+                                      float currentTime = CMTimeGetSeconds( self.currentTime);
+                                      
+                                       [songInfo setValue:[NSNumber numberWithFloat:currentTime]forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+                                      
+                                      infoCenter.nowPlayingInfo = songInfo;
+                                      
+                                  
+                                      
+                                  }];
+                              });
+                          }];
+
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self initPlayer];
+    
+    
+    
+    self.minimizedView.hidden = YES;
+    /*
+        Update the UI when these player properties change.
+    
+        Use the context parameter to distinguish KVO for our particular observers and not
+        those destined for a subclass that also happens to be observing these properties.
+    */
+    
+    
+    UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector (moveViewWithGestureRecognizer:)];
+    [self.view addGestureRecognizer:panGestureRecognizer];
+}
+
+- (void)clearObservers {
+ 
+    if (_timeObserverToken) {
+        [self.player removeTimeObserver:_timeObserverToken];
+        _timeObserverToken = nil;
+    }
+    
+    [self.player pause];
+    
+    [self.player replaceCurrentItemWithPlayerItem:nil];
+    
+    [self removeObserver:self forKeyPath:@"asset" context:&AAPLPlayerViewControllerKVOContext];
+    [self removeObserver:self forKeyPath:@"player.currentItem.duration" context:&AAPLPlayerViewControllerKVOContext];
+    [self removeObserver:self forKeyPath:@"player.rate" context:&AAPLPlayerViewControllerKVOContext];
+    [self removeObserver:self forKeyPath:@"player.currentItem.status" context:&AAPLPlayerViewControllerKVOContext];
+    
+    
     
     
 }
 
-
-
 - (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-    if(_timebar)
-        _timebar = nil;
     
+    
+    // Turn off remote control event delivery
+    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
+    
+    // Resign as first responder
+    [self resignFirstResponder];
+    
+    [super viewDidDisappear:animated];
+
     if (_timeObserverToken) {
         [self.player removeTimeObserver:_timeObserverToken];
         _timeObserverToken = nil;
     }
 
     [self.player pause];
-
+    
     [self removeObserver:self forKeyPath:@"asset" context:&AAPLPlayerViewControllerKVOContext];
     [self removeObserver:self forKeyPath:@"player.currentItem.duration" context:&AAPLPlayerViewControllerKVOContext];
     [self removeObserver:self forKeyPath:@"player.rate" context:&AAPLPlayerViewControllerKVOContext];
     [self removeObserver:self forKeyPath:@"player.currentItem.status" context:&AAPLPlayerViewControllerKVOContext];
+  
 }
 
 // MARK: - Properties
@@ -176,6 +266,7 @@ static int AAPLPlayerViewControllerKVOContext = 0;
 - (CMTime)currentTime {
     return self.player.currentTime;
 }
+
 - (void)setCurrentTime:(CMTime)newCurrentTime {
     [self.player seekToTime:newCurrentTime toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
 }
@@ -275,6 +366,19 @@ static int AAPLPlayerViewControllerKVOContext = 0;
     
 }
 
+- (void)dealloc
+{
+   
+    [self.player pause];
+    
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:AVPlayerItemDidPlayToEndTimeNotification
+                                                  object:_playerItem];
+    
+}
+
+
 // MARK: - IBActions
 
 - (IBAction)playPauseButtonWasPressed:(UIButton *)sender {
@@ -292,11 +396,21 @@ static int AAPLPlayerViewControllerKVOContext = 0;
 }
 
 - (IBAction)rewindButtonWasPressed:(UIButton *)sender {
-    self.rate = MAX(self.player.rate - 2.0, -2.0); // rewind no faster than -2.0
+    
+    float second =  CMTimeGetSeconds(self.currentTime) -10.0;
+    CMTime time = CMTimeMake(second, 1);
+    [self  setCurrentTime:time ];
+    
+    //self.rate = MAX(self.player.rate - 2.0, -2.0); // rewind no faster than -2.0
 }
 
 - (IBAction)fastForwardButtonWasPressed:(UIButton *)sender {
-    self.rate = MIN(self.player.rate + 2.0, 2.0); // fast forward no faster than 2.0
+    
+    float second = 10.0 + CMTimeGetSeconds(self.currentTime);
+    CMTime time = CMTimeMake(second, 1);
+    [self  setCurrentTime:time ];
+ 
+    //self.rate = MIN(self.player.rate + 2.0, 2.0); // fast forward no faster than 2.0
 }
 /*
 - (IBAction)fastForwardButtonWasPressed:(UISlider *)sender {
@@ -344,9 +458,11 @@ static int AAPLPlayerViewControllerKVOContext = 0;
         self.fastForwardButton.enabled = hasValidDuration;
         self.timeSlider.enabled = hasValidDuration;
         self.startTimeLabel.enabled = hasValidDuration;
+        self.durationLabel.hidden = NO;
         self.durationLabel.enabled = hasValidDuration;
         int wholeMinutes = (int)trunc(newDurationSeconds / 60);
         self.durationLabel.text = [NSString stringWithFormat:@"%d:%02d", wholeMinutes, (int)trunc(newDurationSeconds) - wholeMinutes * 60];
+        
         
         
         
@@ -411,8 +527,154 @@ static int AAPLPlayerViewControllerKVOContext = 0;
 }
 
 - (IBAction)backButtonPressed:(id )sender {
-    //[self.navigationController popViewControllerAnimated:YES];
     
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self.player pause];
+    [self.player replaceCurrentItemWithPlayerItem:nil];
+   
+    [self.view removeFromSuperview];
+    
+    /*
+    [UIView animateWithDuration:0.2f animations:
+     ^{
+         self.view.frame = CGRectMake(0,
+                                      self.view.frame.size.height -30,
+                                      self.view.frame.size.width,
+                                      self.view.frame.size.height);
+         
+         self.minimizedView.hidden = NO;
+         
+     } completion:
+     ^(BOOL finished)
+     {
+         
+     }];*/
+    
+}
+
+
+- (IBAction)enterFullScreen:(id )sender {
+    
+    
+    
+     [UIView animateWithDuration:0.2f animations:
+     ^{
+         
+         dispatch_async(dispatch_get_main_queue(), ^{
+             
+             self.minimizedView.hidden = YES;
+             self.view.frame = CGRectMake(0,
+                                          0,
+                                          self.view.frame.size.width,
+                                          self.view.frame.size.height);
+         });
+         
+         
+     
+     } completion:
+     ^(BOOL finished)
+     {
+     }];
+    
+}
+
+- (void)moveViewWithGestureRecognizer:(UIPanGestureRecognizer *)recognizer
+{
+    switch ( recognizer.state )
+    {
+        case UIGestureRecognizerStateBegan:
+            break;
+            
+        case UIGestureRecognizerStateChanged:
+            [self handlGestureStateChangedWithRecognizer:recognizer];
+            break;
+            
+        case UIGestureRecognizerStateEnded:
+            
+            [self handlGestureStateEndedWithRecognizer:recognizer];
+            
+            break;
+            
+        case UIGestureRecognizerStateCancelled:
+            break;
+            
+        default:
+            break;
+    }
+    
+
+    
+}
+
+- (void)handlGestureStateChangedWithRecognizer:(UIPanGestureRecognizer *)recognizer
+{
+    
+    int y = [recognizer translationInView:self.view].y;
+    
+    if(y > 250)
+    {
+        
+        
+        [UIView animateWithDuration:0.3
+                         animations:^{
+                             self.view.frame = CGRectMake(0, y,  self.view.frame.size.width, self.view.frame.size.height);
+                             
+                             
+                         }completion:^(BOOL complete){
+                             self.view.frame = CGRectMake(0,
+                                                          self.view.frame.size.height -30,
+                                                          self.view.frame.size.width,
+                                                          self.view.frame.size.height);
+                             
+                             self.minimizedView.hidden = NO;
+                         }];
+        
+        return;
+    }
+    
+    
+    
+    
+    
+}
+
+- (void)handlGestureStateEndedWithRecognizer:(UIPanGestureRecognizer *)recognizer
+{
+    int y = [recognizer translationInView:self.view].y;
+}
+
+- (void)remoteControlReceivedWithEvent:(UIEvent *)receivedEvent {
+    
+    NSLog(@"got a remote event! %ld", (long)receivedEvent);
+  
+    if (receivedEvent.type == UIEventTypeRemoteControl) {
+        
+        switch (receivedEvent.subtype) {
+           
+            case UIEventSubtypeRemoteControlPlay:
+                [self.player play];
+                break;
+            case UIEventSubtypeRemoteControlPause:
+                [self.player pause];
+                break;
+                
+            case UIEventSubtypeRemoteControlTogglePlayPause:
+                [self playPauseButtonWasPressed:nil];
+                break;
+                
+            case UIEventSubtypeRemoteControlPreviousTrack:
+            case UIEventSubtypeRemoteControlBeginSeekingBackward:
+                [self rewindButtonWasPressed:nil];
+
+                break;
+            case UIEventSubtypeRemoteControlNextTrack:
+            case UIEventSubtypeRemoteControlBeginSeekingForward:
+                [self fastForwardButtonWasPressed:nil];
+                
+                break;
+                
+            default:
+                break;
+        }
+    }
 }
 @end

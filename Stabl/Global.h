@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSMutableArray *feeds;
 
+@property (nonatomic, readwrite) BOOL *playing;
 +(id)Global;
 +(Global*)sharedInstance;
 

@@ -8,18 +8,37 @@
 
 import UIKit
 import CoreData
+import AVFoundation
+import AudioToolbox
 
 @UIApplicationMain
+
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var playerViewController: AAPLPlayerViewController?
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
         // Override point for customization after application launch.
         Parse.setApplicationId("JAOx5UEohCCFyKSjNSAL9MT0C5UzRJy9M5QIC4eC", clientKey: "QeSuIbl79JFEUR7eekkhp6TZmHMtI5MS8DQlVeBg")
-       
         
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+     
+        self.playerViewController = storyboard.instantiateViewControllerWithIdentifier("PlayerViewController") as? AAPLPlayerViewController
+        
+        do
+        {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setActive(true)
+        }
+        catch let error as NSError
+        {
+            print(error)
+        }
+        
+        UIApplication.sharedApplication().beginReceivingRemoteControlEvents()
         return true
     }
 
@@ -68,7 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // The persistent store coordinator for the application. This implementation creates and returns a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
         // Create the coordinator and store
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("SingleViewCoreData.sqlite")
+        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("StablData.sqlite")
         var failureReason = "There was an error creating or loading the application's saved data."
         do {
             try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
@@ -78,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
             dict[NSLocalizedFailureReasonErrorKey] = failureReason
 
-            dict[NSUnderlyingErrorKey] = error as NSError
+            dict[NSUnderlyingErrorKey] = error as! NSError
             let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
             // Replace this with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -121,7 +140,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if error == nil {
                 // The find succeeded.
-                print("Successfully retrieved \(objects!.count) scores.")
+                print("Successfully retrieved \(objects!.count).")
                 
                 // Do something with the found objects
                 if let objects = objects {
@@ -130,10 +149,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     Global.sharedInstance().feeds.removeAllObjects()
                     
                     for object in objects {
+                        print(object)
                         print(object.objectId)
-                        
                             let artistId = 0
-                            //let artistId = object.objectForKey("artistId") as! Int]
+                            //let artistId = object.objectForKey("artistId") as! Int
                         
                             let collectionId = 0
                             let artistName = object.objectForKey("artistName")as! String
@@ -154,7 +173,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             //let country = object.objectForKey("country") as! String
                             //let primaryGenreName = object.objectForKey("primaryGenreName") as! String
                             
-                            
+                        
                             let podcast = Podcast(artistId:artistId,
                                 collectionId:collectionId,
                                 artistName:artistName,
@@ -165,13 +184,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                 feedUrl:feedUrl,
                                 artworkUrl100:artworkUrl100,
                                 releaseDate:releaseDate,
-                                country:country,primaryGenreName:primaryGenreName)
+                                country:country,
+                                primaryGenreName:primaryGenreName)
+                        
+
+                                Global.sharedInstance().feeds.addObject(podcast)
+                        
+                        /*
+                       
+                      
+                        //let entity = NSEntityDescription.insertNewObjectForEntityForName("NewPodcast", inManagedObjectContext: self.managedObjectContext) as! NewPodcast
+                        
+                        let entity = NSEntityDescription.insertNewObjectForEntityForName("NewPodcast", inManagedObjectContext: self.managedObjectContext) as! NewPodcast
+
+                        
+                        entity.artistId = artistId
+                        entity.artistName = artistName
+                        
+                        entity.collectionId = collectionId
+                        
+                        entity.trackName = trackName
+                        
+                        entity.artistViewUrl = artistViewUrl
+                        
+                        entity.collectionViewUrl = collectionViewUrl
+                        entity.feedUrl = feedUrl
+                        
+                        entity.artworkUrl100 = artworkUrl100
+                        
+                        entity.releaseDate = releaseDate
+                        
+                        entity.country = country
                         
                         
-                            Global.sharedInstance().feeds.addObject(podcast)
-                            //print(Global.sharedInstance().feeds)
+                        var error: NSError?
+                        let success = self.self.managedObjectContext.save(&error)
                         
+                        Global.sharedInstance().feeds.addObject(entity)
+                        //self.managedObjectContext.rollback()
                         
+                        */
                     }
                 }
             } else {
@@ -181,6 +233,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
     }
+    
+    func test(){
+    }
+    //func enterFullScreen(podcast:Podcast,episode:NSDictionary){
+        
+    func enterFullScreen(){
+        //self.playerViewController!.podcast = podcast
+        //self.playerViewController!.episode = episode as! [NSObject : AnyObject]
+        self.window?.addSubview(playerViewController!.view)
+        self.playerViewController!.view.frame = self.window!.bounds;
+    }
+    
+    func exitFullScreen(){
+        
+        //self.playerViewController!.podcast = podcast
+        //self.playerViewController!.episode = episode as! [NSObject : AnyObject]
+        let serialQueue = dispatch_queue_create("com.stabl.stablapp", DISPATCH_QUEUE_SERIAL)
+        
+        dispatch_sync(serialQueue) {
+            
+            self.playerViewController!.clearObservers()
+        }
+        
+        self.playerViewController!.initPlayer()
+    }
+    /*
+    override func remoteControlReceivedWithEvent(event: UIEvent) {
+        let rc = event.subtype
+        print("rc.rawValue: \(rc.rawValue)")
+    
+    }*/
 
 }
 

@@ -11,8 +11,8 @@
 
 @interface Podcast : NSObject
 
-@property (nonatomic, strong) NSString* artistId;
-@property (nonatomic, strong) NSString* collectionId;
+@property (nonatomic, readwrite) int artistId;
+@property (nonatomic, readwrite) int collectionId;
 
 @property (nonatomic, strong) NSString *artistName;
 @property (nonatomic, strong) NSString *collectionName;

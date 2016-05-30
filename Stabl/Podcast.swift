@@ -19,11 +19,8 @@ class Podcast: NSObject {
     var collectionViewUrl : String!
     var feedUrl : String!
     var artworkUrl100 : String!
-    
     var releaseDate : NSDate!
-    
     var country : String!
-    
     var primaryGenreName : String!
   
     
@@ -44,7 +41,7 @@ class Podcast: NSObject {
 //        
 //        let dateString = dateFormatter.stringFromDate(releaseDate)
         
-        var dateFormatter = NSDateFormatter()
+        let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         
         self.releaseDate = dateFormatter.dateFromString(releaseDate)
@@ -62,14 +59,10 @@ class Podcast: NSObject {
         self.trackName = aDecoder.decodeObjectForKey("trackName") as! String
         self.artistViewUrl = aDecoder.decodeObjectForKey("artistViewUrl") as! String
         self.collectionViewUrl = aDecoder.decodeObjectForKey("collectionViewUrl") as! String
-        
         self.feedUrl = aDecoder.decodeObjectForKey("feedUrl") as! String
-        
         self.artworkUrl100 = aDecoder.decodeObjectForKey("artworkUrl100") as! String
         self.releaseDate = aDecoder.decodeObjectForKey("releaseDate") as! NSDate
-        
         self.country = aDecoder.decodeObjectForKey("country") as! String
-        
         self.primaryGenreName = aDecoder.decodeObjectForKey("primaryGenreName") as! String
         
     }
@@ -79,17 +72,12 @@ class Podcast: NSObject {
         aCoder.encodeInteger(self.collectionId, forKey: "collectionId")
         aCoder.encodeObject(self.artistName, forKey: "artistName")
         aCoder.encodeObject(self.collectionName, forKey: "collectionName")
-        
         aCoder.encodeObject(self.trackName, forKey: "trackName")
         aCoder.encodeObject(self.artistViewUrl, forKey: "artistViewUrl")
-        
         aCoder.encodeObject(self.collectionViewUrl, forKey: "collectionViewUrl")
-        
         aCoder.encodeObject(self.feedUrl, forKey: "feedUrl")
         aCoder.encodeObject(self.artworkUrl100, forKey: "artworkUrl100")
-        
         aCoder.encodeObject(self.releaseDate, forKey: "releaseDate")
-        
         aCoder.encodeObject(self.country, forKey: "country")
         aCoder.encodeObject(self.primaryGenreName, forKey: "primaryGenreName")
     }

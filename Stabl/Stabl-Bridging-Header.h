@@ -9,4 +9,9 @@
 #import <ParseUI/ParseUI.h>
 #import <Bolts/Bolts.h>
 #import "Global.h"
+//#import "Podcast.h"
 #import "ShowEpisodesViewController.h"
+
+#import "AAPLPlayerViewController.h"
+
+#import <CoreData/CoreData.h>

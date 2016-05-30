@@ -107,7 +107,32 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                         let country = dic.objectForKey("country") as! String
                         let primaryGenreName = dic.objectForKey("primaryGenreName") as! String
                         
+                        /*
+                        let appDelegate    = UIApplication.sharedApplication().delegate as? AppDelegate
                         
+                        let managedContext = appDelegate!.managedObjectContext
+                     
+                        let entity = NSEntityDescription.insertNewObjectForEntityForName("NewPodcast", inManagedObjectContext:managedContext) as! NewPodcast
+                       
+                       
+                        entity.artistId = artistId
+                        entity.artistName = artistName
+                        
+                        entity.collectionId = collectionId
+                        
+                        entity.trackName = trackName
+                        
+                        entity.artistViewUrl = artistViewUrl
+                        
+                        entity.collectionViewUrl = collectionViewUrl
+                        entity.feedUrl = feedUrl
+                        
+                        entity.artworkUrl100 = artworkUrl100
+                        
+                        entity.releaseDate = releaseDate
+                        
+                        entity.country = country
+                        */
                         let podcast = Podcast(artistId:artistId,
                             collectionId:collectionId,
                             artistName:artistName,
@@ -121,7 +146,10 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                             country:country,primaryGenreName:primaryGenreName)
                         
                         
-                        self.results .addObject(podcast)
+                        self.results.addObject(podcast)
+                        
+                        //managedContext.rollback()
+
                     }
                     
                 }
@@ -222,9 +250,9 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
              podcast = Global.sharedInstance().feeds[indexPath.row] as! Podcast
         }
         
-       let imageUrl:String  =  podcast.artworkUrl100
+       let imageUrl:String  =  podcast.artworkUrl100!
        cell.nameLabel.text = podcast.collectionName
-       cell.authorLabel.text = podcast.artistName.uppercaseString
+       cell.authorLabel.text = podcast.artistName!.uppercaseString
         
        cell.episodesLabel.text = "24 EPISODES".uppercaseString
        ImageLoader.sharedLoader.imageForUrl(imageUrl, completionHandler:{(image: UIImage?, url: String) in
@@ -280,7 +308,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         // Pass the selected object to the new view controller.
        
         
-        var selectedIndexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
+        let selectedIndexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
         var podcast:Podcast
         
         if(search == true)
@@ -297,7 +325,9 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
           
             if let controller = segue.destinationViewController as? ShowEpisodesViewController{
                 controller.podcast = podcast
-                print(podcast.artistName)
+                
+                print("-----------")
+                print(podcast.artworkUrl100)
             }
         }
     }

@@ -10,6 +10,8 @@
 
 @import Foundation;
 @import AVFoundation;
+
+@import MediaPlayer;
 @import CoreMedia.CMTime;
 @class AAPLPlayerView;
 @class Podcast;
@@ -32,7 +34,6 @@
 @property (weak) IBOutlet UIImageView *frontImageView;
 @property (weak) IBOutlet UIView *minimizedView;
 
-@property (strong) UIView *timebar;
 @property (weak) IBOutlet UISlider *timeSlider;
 @property (weak) IBOutlet UILabel *bigTitleLabel;
 @property (weak) IBOutlet UILabel *episodeLabel;
@@ -41,6 +42,8 @@
 @property (weak) IBOutlet UILabel *durationLabel;
 @property (weak) IBOutlet UILabel *totaldurationLabel;
 @property (weak) IBOutlet UILabel *remainTimeLabel;
+
+@property (weak) IBOutlet UILabel *subtitleLabel;
 @property (weak) IBOutlet UIButton *rewindButton;
 @property (weak) IBOutlet UIButton *playPauseButton;
 @property (weak) IBOutlet UIButton *smallPlayPauseButton;
@@ -49,5 +52,10 @@
 @property (weak) IBOutlet UIImageView *backgorund;
 @property (weak) IBOutlet AAPLPlayerView *playerView;
 
+@property (strong,nonatomic) UIImage *artwork;
+
+- (void)initPlayer;
+
+- (void)clearObservers;
 @end
 

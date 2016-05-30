@@ -6,11 +6,12 @@
 //  Copyright © 2016 Mijin Cho. All rights reserved.
 //
 
-
-#import "Stabl-Swift.h"
 #import "CustomTableViewCell.h"
 #import "ShowEpisodesViewController.h"
 #import "AAPLPlayerViewController.h"
+#import "Stabl-Swift.h"
+
+
 //
 //#import "Stabl-Bridging-Header.h"
 // String used to identify the update object in the user defaults storage.
@@ -31,6 +32,9 @@ static NSUInteger const kImportSize = 300;
     NSMutableString *pubDate;
     NSString *element;
     NSString *channel;
+    
+    NewPodcast* currentPodcast;
+    
 }
 
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
@@ -39,6 +43,11 @@ static NSUInteger const kImportSize = 300;
 @property (nonatomic, weak)  IBOutlet UIImageView *artwork;
 @property (nonatomic, weak)  IBOutlet UILabel *titleLabel;
 @property (nonatomic, weak)  IBOutlet UIView *sectionView;
+
+@property (nonatomic, weak)  IBOutlet UIButton *subscribeBtn;
+
+//@property (nonatomic, strong)  AAPLPlayerViewController * playerViewController;
+
 @end
 @implementation ShowEpisodesViewController
 - (BOOL)prefersStatusBarHidden {
@@ -59,6 +68,7 @@ static NSUInteger const kImportSize = 300;
     [[ImageLoader sharedLoader] imageForUrl: _podcast.artworkUrl100  completionHandler:^(UIImage *image, NSString *url) {
         _artwork.image = image;
     }];
+  
     
     _dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateStyle = NSDateFormatterLongStyle;
@@ -81,6 +91,28 @@ static NSUInteger const kImportSize = 300;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController.navigationBar setHidden:YES];
+    
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewPodcast"];
+ 
+    AppDelegate* appDelegate = (AppDelegate*) [UIApplication sharedApplication].delegate;
+    
+    NSLog(@"");
+    [request setPredicate:[NSPredicate predicateWithFormat:@"collectionName == %@", _podcast.collectionName ]];
+    
+    NSError *error = nil;
+    NSArray *results = [appDelegate.managedObjectContext executeFetchRequest:request error:&error];
+    if (results.count <= 0 ) {
+        [_subscribeBtn setImage:[UIImage imageNamed:@"btn_subscribe"] forState:UIControlStateNormal];
+        
+    }
+    else
+    {
+        currentPodcast= [results objectAtIndex:0];
+        NSLog(@"results %@",results);
+        [_subscribeBtn setImage:[UIImage imageNamed:@"btn_subscribed"] forState:UIControlStateNormal];
+    }
+  
+   
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -137,7 +169,6 @@ static NSUInteger const kImportSize = 300;
     NSString* dateString = [feed objectForKey: @"pubDate"];
     cell.label2.text = dateString;
     cell.desc.text =  [feed objectForKey: @"description"];
-
     
     
     return cell;
@@ -164,7 +195,7 @@ static NSUInteger const kImportSize = 300;
 //    [cell.contentView addSubview:button];
 
     
-    NSLog(@"numberOfLines %d",numberOfLines);
+//    NSLog(@"numberOfLines %d",numberOfLines);
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -172,13 +203,31 @@ static NSUInteger const kImportSize = 300;
     
     
     NSDictionary *episode = _feeds[indexPath.row];
-   
-    AAPLPlayerViewController * controller = (AAPLPlayerViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"PlayerViewController"];
-    controller.podcast = _podcast;
-    controller.episode = episode;
-    [self presentViewController:controller animated:NO completion:nil];
     
+    AppDelegate* appDelegate = (AppDelegate*) [UIApplication sharedApplication].delegate;
+    
+    appDelegate.playerViewController.podcast = _podcast;
+    appDelegate.playerViewController.episode = episode;
+    appDelegate.playerViewController.artwork = _artwork.image;
+    
+    if(appDelegate.playerViewController.player.rate != 1.0)
+    {
+        [appDelegate enterFullScreen];
+    }
+    else
+    {
+        [appDelegate exitFullScreen];
+        /*
+         
+         dispatch_queue_t _serialQueue = dispatch_queue_create("com.stabl.stablapp", DISPATCH_QUEUE_SERIAL);
+        dispatch_sync(_serialQueue, ^{ printf("1"); });
+        printf("2");
+        dispatch_sync(_serialQueue, ^{ printf("3"); });
+        printf("4");
+        */
+    }
 }
+
 
 #pragma mark - <NSXMLParserDelegate> Implementation
 
@@ -258,6 +307,49 @@ static NSUInteger const kImportSize = 300;
 }
 
 - (IBAction)show_notes:(id )sender {
+
+}
+
+-(IBAction)subscribe:(id)sender{
+    
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    
+    
+    if ([[_subscribeBtn imageForState:UIControlStateNormal] isEqual:[UIImage imageNamed:@"btn_subscribed.png"]]){
+        [_subscribeBtn setImage:[UIImage imageNamed:@"btn_subscribe"]
+                       forState:UIControlStateNormal];
+        
+        [appDelegate.managedObjectContext deleteObject:currentPodcast];
+        
+       
+        
+    }else{
+        
+        
+        NewPodcast *podcast = [NSEntityDescription insertNewObjectForEntityForName:@"NewPodcast" inManagedObjectContext:appDelegate.managedObjectContext];
+       
+        
+        //podcast.artistId= self.podcast.artistId;
+        
+        podcast.artistName = self.podcast.artistName;
+        podcast.collectionName= self.podcast.collectionName;
+        podcast.trackName= self.podcast.trackName;
+        podcast.artistViewUrl= self.podcast.artistViewUrl;
+        podcast.collectionViewUrl= self.podcast.collectionViewUrl;
+        podcast.feedUrl= self.podcast.feedUrl;
+        podcast.artworkUrl100= self.podcast.artworkUrl100;
+        //podcast.releaseDate= self.podcast.releaseDate;
+        podcast.country= self.podcast.country;
+        podcast.primaryGenreName= self.podcast.primaryGenreName;
+        [_subscribeBtn setImage:[UIImage imageNamed:@"btn_subscribed"] forState:UIControlStateNormal];
+    }
+    
+    NSError *error = nil;
+    if ([appDelegate.managedObjectContext save:&error] == NO) {
+        NSAssert(NO, @"Error saving context: %@\n%@", [error localizedDescription], [error userInfo]);
+    }
+   
 
 }
 
