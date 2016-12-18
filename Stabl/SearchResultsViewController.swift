@@ -70,7 +70,8 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        
+        //self.tableView.rowHeight = UITableViewAutomaticDimension
+        //self.tableView.estimatedRowHeight = 160
         //self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.isNavigationBarHidden = false
         /*
@@ -349,7 +350,7 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
        cell.nameLabel.text = podcast.title
        //cell.episodesLabel.text = "\(podcast.trackCount) EPISODES".uppercased()
         
-       cell.artwork.image = UIImage(named:"btn_genre")
+       cell.artwork.image = UIImage(named:"playicon")
        
        print(imageUrl)
        let totalSeconds:Int = podcast.duration
@@ -367,16 +368,18 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
         
        cell.durationLabel.text = "\(hours):\(min):\(seconds)"
         
-       cell.descriptionLabel.text = podcast.desc
+        let trackCount:Int = podcast.trackCount as! Int
+       cell.durationLabel.text = "\(trackCount) EPISODES"
+       //cell.descriptionLabel.text = podcast.desc
        cell.button.tag = indexPath.row
        ImageLoader.sharedLoader.imageForUrl(imageUrl, completionHandler:{(image: UIImage?, url: String) in
             cell.artwork.image = image
         })
         
-        let releaseDate :NSDate = self.dateFormatter.date(from :podcast.releaseDate) as! NSDate
+        //let releaseDate :NSDate = self.dateFormatter.date(from :podcast.releaseDate) as! NSDate
         
         
-        cell.dateLabel.text = pubDateFormatter.string(from: releaseDate as Date)
+        //cell.dateLabel.text = pubDateFormatter.string(from: releaseDate as Date)
             
             
         

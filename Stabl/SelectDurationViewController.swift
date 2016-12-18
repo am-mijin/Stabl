@@ -13,6 +13,13 @@ class SelectDurationViewController: BaseViewController {
     
     @IBOutlet weak var button: UIButton!
     
+    @IBOutlet weak var minusBtn: UIButton!
+    @IBOutlet weak var plusBtn: UIButton!
+    @IBOutlet weak var uptoLabel: UILabel!
+    @IBOutlet weak var minutesLabel: UILabel!
+    @IBOutlet weak var durationLabel: UILabel!
+    
+    var currentDuration :Int = 15
     var genres: NSArray = []
     
     var duration :Int = 0
@@ -77,7 +84,76 @@ class SelectDurationViewController: BaseViewController {
         self.present(vc, animated: false, completion: nil)
     }
     
+    @IBAction func minusplusbuttonPressed(sender: UIButton) {
+        
+        minusBtn.setImage(UIImage(named:"group3-2"), for: .normal)
+        plusBtn.setImage(UIImage(named:"group3-4"), for: .normal)
+        if( sender.tag == 1){
+            currentDuration = currentDuration + 15
+            
+           
+            if( currentDuration >= 60){
+                currentDuration = 60
+                
+                plusBtn.setImage(UIImage(named:"group3-3"), for: .normal)
+            }
+        }else{
+            currentDuration = currentDuration - 15
+            
+            if( currentDuration <= 15){
+                currentDuration = 15
+                
+                minusBtn.setImage(UIImage(named:"group3-1"), for: .normal)
+                plusBtn.setImage(UIImage(named:"group3-4"), for: .normal)
+            }
+        }
+        
+        
+        switch currentDuration {
+        case 15:
+            self.uptoLabel.text = "Upto"
+            self.minutesLabel.text = "Minutes"
+            self.durationLabel.text = "15"
+            break
+        case 30:
+            
+            self.uptoLabel.text = "Between"
+            self.minutesLabel.text = "Minutes"
+            self.durationLabel.text = "15-30"
+            break
+        case 45:
+            
+            self.uptoLabel.text = "Between"
+            self.minutesLabel.text = "Minutes"
+            self.durationLabel.text = "30-45"
+            break
+        case 60:
+            
+            self.uptoLabel.text = "Around"
+            self.minutesLabel.text = "Hour"
+            self.durationLabel.text = "1"
+            break
+        default: break
+            
+        }
+        
+    }
     
+    
+    @IBAction func searchRandomAudio(sender: UIButton) {
+        
+        let eventstr:String = "random"
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "SearchResultsViewController") as! SearchResultsViewController
+        controller.genres = self.genres
+        controller.min_duration = 0
+        controller.max_duration = 0
+        BITHockeyManager.shared().metricsManager.trackEvent(  withName:   eventstr)
+        
+        self.navigationController!.pushViewController(controller, animated: true)
+        
+    }
     
     @IBAction func buttonPressed(sender: UIButton) {
         var eventstr:String = "random"
@@ -86,31 +162,28 @@ class SelectDurationViewController: BaseViewController {
         let controller = storyboard.instantiateViewController(withIdentifier: "SearchResultsViewController") as! SearchResultsViewController
         controller.genres = self.genres
         
-        switch sender.tag {
-        case 0:
+        switch currentDuration {
+        case 15:
             controller.min_duration = 0
             controller.max_duration = 900
             eventstr = "15 mins"
             break
-        case 1:
+        case 30:
             controller.min_duration = 900
             controller.max_duration = 1800
               eventstr = "30 mins"
             break
-        case 2:
+        case 45:
             controller.min_duration = 1800
             controller.max_duration = 2700
             eventstr = "45 mins"
             break
-        case 3:
+        case 60:
             controller.min_duration = 3600
             controller.max_duration = 4500
             eventstr = "1 hour"
             break
-        default:
-            
-            controller.min_duration = 0
-            controller.max_duration = 0
+        default:break
         }
         
         BITHockeyManager.shared().metricsManager.trackEvent(  withName:   eventstr)
