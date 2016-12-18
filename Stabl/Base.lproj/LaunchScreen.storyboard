@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" initialViewController="MpG-SD-ISd">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="MpG-SD-ISd">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -14,11 +15,24 @@
                         <viewControllerLayoutGuide type="bottom" id="xb3-aO-Qok"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="header_logo" translatesAutoresizingMaskIntoConstraints="NO" id="1tS-iE-ltt">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="33" id="dFE-vI-o6F"/>
+                                    <constraint firstAttribute="width" constant="209" id="qPt-ZE-QtY"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.12941176469999999" green="0.035294117649999998" blue="0.16862745100000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="1tS-iE-ltt" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="lJU-rB-tIC"/>
+                            <constraint firstItem="1tS-iE-ltt" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="vwg-Sb-aFM"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="VYa-Gs-TTC"/>
+                    <nil key="simulatedTopBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -27,8 +41,9 @@
         <!--Navigation Controller-->
         <scene sceneID="MKp-WA-6EJ">
             <objects>
-                <navigationController id="MpG-SD-ISd" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="pbe-2w-6zv">
+                <navigationController navigationBarHidden="YES" id="MpG-SD-ISd" sceneMemberID="viewController">
+                    <nil key="simulatedTopBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="pbe-2w-6zv">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -40,4 +55,7 @@
             </objects>
         </scene>
     </scenes>
+    <resources>
+        <image name="header_logo" width="209" height="33"/>
+    </resources>
 </document>

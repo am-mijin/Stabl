@@ -1,0 +1,6 @@
+framework module Pods_StablTests {
+  umbrella header "Pods-StablTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

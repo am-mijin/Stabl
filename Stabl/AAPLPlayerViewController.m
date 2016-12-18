@@ -11,11 +11,14 @@
 #import "Stabl-Swift.h"
 
 #import "Consts.h"
+#import <HockeySDK/HockeySDK.h>
 
+#define panGestureRecognizer_Y 250
 
 // Private properties
 @interface AAPLPlayerViewController ()
 {
+    
     AVPlayer *_player;
     AVURLAsset *_asset;
     id<NSObject> _timeObserverToken;
@@ -32,6 +35,7 @@
 @property (readonly) AVPlayerLayer *playerLayer;
 
 @property (nonatomic, strong)UIPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic, strong)ShowEpisodesViewController *showEpisodesViewController;
 @end
 
 @implementation AAPLPlayerViewController
@@ -54,16 +58,46 @@ static int AAPLPlayerViewControllerKVOContext = 0;
     
 }
 
+-(BOOL)prefersStatusBarHidden
+{
+    return YES;
+    
+}
 
 -(void)viewDidLoad
 {
     
     [super viewDidLoad];
     
+    [_player play];
+    
     _timeSlider.minimumTrackTintColor = Secondary;
     _timeSlider.maximumTrackTintColor = [UIColor whiteColor ];
     [_timeSlider setMinimumTrackImage: [UIImage imageNamed:@"slider_left"] forState: UIControlStateNormal];
     [_timeSlider setMaximumTrackImage: [UIImage imageNamed:@"slider_right"] forState: UIControlStateNormal];
+    
+    dispatch_queue_t globalConcurrentQueue =
+    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    //dispatch_async(globalConcurrentQueue, ^{
+     //});
+    if ( self.showEpisodesViewController == nil) {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        self.showEpisodesViewController = [storyboard instantiateViewControllerWithIdentifier:@"ShowEpisodesViewController"];
+        
+        self.showEpisodesViewController.podcast = _podcast;
+        
+        
+        [self.view addSubview:self.showEpisodesViewController.view];
+        
+        self.showEpisodesViewController.view.frame = CGRectMake( self.view.frame.size.width,
+                                                               0 ,
+                                                                self.view.frame.size.width,
+                                                                self.view.frame.size.height);
+
+    }
+    
+    
     
     
 }
@@ -78,19 +112,36 @@ static int AAPLPlayerViewControllerKVOContext = 0;
     self.playerView.playerLayer.player = self.player;
     
     NSURL *url = [NSURL URLWithString:@"http://broadappeal.podomatic.com/enclosure/2016-01-20T16_02_21-08_00.mp3"];
-    url = [NSURL URLWithString :[_episode objectForKey: @"link"]];
-    NSLog(@"url %@",url);
+    
+   
     _titleLabel.text =  _podcast.collectionName;
     _bigTitleLabel.text =  _podcast.collectionName;
     
+    if(_episode){
+        url = [NSURL URLWithString :[_episode objectForKey: @"link"]];
+        //NSLog(@"_episode url %@",url);
+        
+        _subtitleLabel.text = [_episode objectForKey: @"title"];
+        _episodeLabel.text =  [_episode objectForKey: @"title"];
+        
+    }else{
+        
+        url = [NSURL URLWithString :[_podcast.enclosure objectForKey:@"url"]];
+        //NSLog(@"url %@",url);
+        
+        _subtitleLabel.text = _podcast.title;
+        _episodeLabel.text = _podcast.title;
+        
+    }
     
-    _subtitleLabel.text = [_episode objectForKey: @"title"];
+    BITMetricsManager *metricsManager = [BITHockeyManager sharedHockeyManager].metricsManager;
+    [metricsManager trackEventWithName:[NSString stringWithFormat: @"%@ - %@",self.podcast.collectionName,_episodeLabel.text]];
     
-    _episodeLabel.text =  [_episode objectForKey: @"title"];
-    
+  
     
     NSString* imageUrl= _podcast.artworkUrl100;
-    NSLog(@"_podcast.artworkUrl100 %@",_podcast.artworkUrl100);
+    //NSLog(@"_podcast.artworkUrl100 %@",_podcast.artworkUrl100);
+
     
     
     [[ImageLoader sharedLoader] imageForUrl:imageUrl  completionHandler:^(UIImage *image, NSString *url) {
@@ -166,7 +217,8 @@ static int AAPLPlayerViewControllerKVOContext = 0;
                                       NSMutableDictionary *songInfo = [NSMutableDictionary dictionary];
                                       
                                       [songInfo setValue:_podcast.collectionName forKey:MPMediaItemPropertyTitle];
-                                      [songInfo setValue:[_episode objectForKey: @"title"] forKey:MPMediaItemPropertyArtist];
+                                      
+                                      [songInfo setValue:_episodeLabel.text forKey:MPMediaItemPropertyArtist];
                                                                      
                                       float total = CMTimeGetSeconds( self.duration);
                                       [songInfo setValue:[NSNumber numberWithFloat:total] forKey:MPMediaItemPropertyPlaybackDuration];
@@ -187,11 +239,15 @@ static int AAPLPlayerViewControllerKVOContext = 0;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.navigationController.navigationBar.hidden = YES;
+    //self.navigationController.navigationBar.translucent = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidChange:) name:kPodecastNotification object:nil];
+    
     [self initPlayer];
     
     
     
-    self.minimizedView.hidden = YES;
+   // self.minimizedView.hidden = YES;
     /*
         Update the UI when these player properties change.
     
@@ -200,8 +256,32 @@ static int AAPLPlayerViewControllerKVOContext = 0;
     */
     
     
-    UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector (moveViewWithGestureRecognizer:)];
-    [self.view addGestureRecognizer:panGestureRecognizer];
+    //UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector (moveViewWithGestureRecognizer:)];
+    //[self.view addGestureRecognizer:panGestureRecognizer];
+}
+
+-(void)playerItemDidChange:(NSNotification*)notification
+{
+  
+    
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         
+                         
+                         self.showEpisodesViewController.view.frame = CGRectMake(self.view.frame.size.width,
+                                                                                 0,
+                                                                                 self.view.frame.size.width,
+                                                                                 self.view.frame.size.height );
+                     }completion:^(BOOL complete){
+                         NSDictionary* ep = notification.userInfo;
+                         
+                         if(ep != nil){
+                             self.episode = ep;
+                             
+                             [self clearObservers];
+                             [self initPlayer];
+                         }
+                     }];
 }
 
 - (void)clearObservers {
@@ -215,12 +295,18 @@ static int AAPLPlayerViewControllerKVOContext = 0;
     
     [self.player replaceCurrentItemWithPlayerItem:nil];
     
-    [self removeObserver:self forKeyPath:@"asset" context:&AAPLPlayerViewControllerKVOContext];
-    [self removeObserver:self forKeyPath:@"player.currentItem.duration" context:&AAPLPlayerViewControllerKVOContext];
-    [self removeObserver:self forKeyPath:@"player.rate" context:&AAPLPlayerViewControllerKVOContext];
-    [self removeObserver:self forKeyPath:@"player.currentItem.status" context:&AAPLPlayerViewControllerKVOContext];
-    
-    
+    @try{
+        [self removeObserver:self forKeyPath:@"asset" context:&AAPLPlayerViewControllerKVOContext];
+        [self removeObserver:self forKeyPath:@"player.currentItem.duration" context:&AAPLPlayerViewControllerKVOContext];
+        [self removeObserver:self forKeyPath:@"player.rate" context:&AAPLPlayerViewControllerKVOContext];
+        [self removeObserver:self forKeyPath:@"player.currentItem.status" context:&AAPLPlayerViewControllerKVOContext];
+        
+        
+    }
+   
+    @catch (NSException * e) {
+        NSLog(@"Exception: %@", e);
+    }
     
     
 }
@@ -363,21 +449,15 @@ static int AAPLPlayerViewControllerKVOContext = 0;
     }];
     
     [self.player play];
-    
 }
 
 - (void)dealloc
 {
-   
     [self.player pause];
-    
-    
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:AVPlayerItemDidPlayToEndTimeNotification
                                                   object:_playerItem];
-    
 }
-
 
 // MARK: - IBActions
 
@@ -463,10 +543,8 @@ static int AAPLPlayerViewControllerKVOContext = 0;
         int wholeMinutes = (int)trunc(newDurationSeconds / 60);
         self.durationLabel.text = [NSString stringWithFormat:@"%d:%02d", wholeMinutes, (int)trunc(newDurationSeconds) - wholeMinutes * 60];
         
-        
-        
-        
         _totaldurationLabel.text = self.durationLabel.text ;
+       
     }
     else if ([keyPath isEqualToString:@"player.rate"]) {
         // Update playPauseButton image
@@ -528,52 +606,66 @@ static int AAPLPlayerViewControllerKVOContext = 0;
 
 - (IBAction)backButtonPressed:(id )sender {
     
+    self.navigationController.navigationBar.hidden = false;
     [self.player pause];
     [self.player replaceCurrentItemWithPlayerItem:nil];
    
-    [self.view removeFromSuperview];
-    
-    /*
-    [UIView animateWithDuration:0.2f animations:
-     ^{
-         self.view.frame = CGRectMake(0,
-                                      self.view.frame.size.height -30,
-                                      self.view.frame.size.width,
-                                      self.view.frame.size.height);
-         
-         self.minimizedView.hidden = NO;
-         
-     } completion:
-     ^(BOOL finished)
-     {
-         
-     }];*/
-    
+
+  
+    //[self clearObservers];
+    //[self.navigationController popViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+    }];
 }
 
+
+- (IBAction)showAllEpisodes:(id )sender {
+    
+    /*
+    self.view.frame = CGRectMake(0,
+                                 self.view.frame.size.height -30 ,
+                                 self.view.frame.size.width,
+                                 self.view.frame.size.height);
+    
+    self.minimizedView.hidden = NO;
+    
+    NSDictionary* data = [NSDictionary dictionaryWithObject:_podcast forKey:@"podcast"];
+    [[NSNotificationCenter defaultCenter]postNotificationName:ShowAllEpisodesNotification object:@""
+                                                     userInfo: data];
+    */
+    
+    
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         
+                         
+                         self.showEpisodesViewController.view.frame = CGRectMake(0,
+                                                      0,
+                                                      self.view.frame.size.width,
+                                                      self.view.frame.size.height );
+                     }completion:^(BOOL complete){
+                         
+                     }];
+    
+}
 
 - (IBAction)enterFullScreen:(id )sender {
     
     
     
-     [UIView animateWithDuration:0.2f animations:
-     ^{
-         
-         dispatch_async(dispatch_get_main_queue(), ^{
-             
-             self.minimizedView.hidden = YES;
-             self.view.frame = CGRectMake(0,
-                                          0,
-                                          self.view.frame.size.width,
-                                          self.view.frame.size.height);
-         });
-         
-         
-     
-     } completion:
-     ^(BOOL finished)
-     {
-     }];
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         
+                         
+                         self.view.frame = CGRectMake(0,
+                                                      0,
+                                                      self.view.frame.size.width,
+                                                      self.view.frame.size.height );
+                     }completion:^(BOOL complete){
+                         
+                         self.minimizedView.hidden = YES;
+                     }];
     
 }
 
@@ -610,7 +702,7 @@ static int AAPLPlayerViewControllerKVOContext = 0;
     
     int y = [recognizer translationInView:self.view].y;
     
-    if(y > 250)
+    if(y > panGestureRecognizer_Y)
     {
         
         
@@ -621,20 +713,15 @@ static int AAPLPlayerViewControllerKVOContext = 0;
                              
                          }completion:^(BOOL complete){
                              self.view.frame = CGRectMake(0,
-                                                          self.view.frame.size.height -30,
+                                                          self.view.frame.size.height - 30,
                                                           self.view.frame.size.width,
-                                                          self.view.frame.size.height);
+                                                          self.view.frame.size.height );
                              
                              self.minimizedView.hidden = NO;
                          }];
         
-        return;
+       
     }
-    
-    
-    
-    
-    
 }
 
 - (void)handlGestureStateEndedWithRecognizer:(UIPanGestureRecognizer *)recognizer
@@ -644,7 +731,7 @@ static int AAPLPlayerViewControllerKVOContext = 0;
 
 - (void)remoteControlReceivedWithEvent:(UIEvent *)receivedEvent {
     
-    NSLog(@"got a remote event! %ld", (long)receivedEvent);
+    //NSLog(@"got a remote event! %ld", (long)receivedEvent);
   
     if (receivedEvent.type == UIEventTypeRemoteControl) {
         

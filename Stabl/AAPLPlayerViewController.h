@@ -15,7 +15,10 @@
 @import CoreMedia.CMTime;
 @class AAPLPlayerView;
 @class Podcast;
-@interface AAPLPlayerViewController : UIViewController
+#import "BaseViewController.h"
+
+@interface AAPLPlayerViewController : BaseViewController
+
 
 @property (readonly) AVPlayer *player;
 @property AVURLAsset *asset;

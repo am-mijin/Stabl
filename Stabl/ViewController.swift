@@ -9,13 +9,17 @@
 import UIKit
 
 import CoreData
-
+extension CGRect {
+    init(_ x:CGFloat, _ y:CGFloat, _ w:CGFloat, _ h:CGFloat) {
+        self.init(x:x, y:y, width:w, height:h)
+    }
+}
 class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
     var podcasts = [NSManagedObject]()
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return .lightContent
     }
     
     override func viewDidLoad() {
@@ -29,23 +33,31 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBarHidden = true
+        self.navigationController?.isNavigationBarHidden = true
   
-        fetchAllPodcasts()
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        let navigationController = storyboard.instantiateViewController(withIdentifier: "SearchNavigationController") as! UINavigationController
+        let rootController = storyboard.instantiateViewController(withIdentifier: "SelectGenresViewController") as! SelectGenresViewController
+        navigationController.setViewControllers([rootController], animated: false)
+        self.present(navigationController, animated: false, completion: nil)
+        
+        //fetchAllPodcasts()
     }
     
-    func saveName(name : String)
+    func saveName(_ name : String)
     {
         
-        let appDelegate    = UIApplication.sharedApplication().delegate as? AppDelegate
+        let appDelegate    = UIApplication.shared.delegate as? AppDelegate
         
         let managedContext = appDelegate!.managedObjectContext
         
     
         
-        let podcast = NSEntityDescription.insertNewObjectForEntityForName("NewPodcast", inManagedObjectContext: managedContext) as! NewPodcast
+        let podcast = NSEntityDescription.insertNewObject(forEntityName: "NewPodcast", into: managedContext) as! NewPodcast
         
         podcast.artistName = "BBC"
         podcasts.append(podcast)
@@ -54,15 +66,15 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     
     func fetchAllPodcasts()
     {
-        let appDelegate    = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate    = UIApplication.shared.delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext
         
-        let fetchRequest   = NSFetchRequest(entityName: "NewPodcast")
+        let fetchRequest   = NSFetchRequest<NewPodcast>(entityName: "NewPodcast")
         
         do
         {
-            let fetchedResult = try managedContext.executeFetchRequest(fetchRequest) as? [NewPodcast]
+            let fetchedResult = try managedContext.fetch(fetchRequest) as? [NewPodcast]
             
             if let results = fetchedResult
             {
@@ -70,11 +82,11 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
                 self.tableView.reloadData()
                 
                 if (results.count > 0){
-                    self.tableView.hidden = false
+                    self.tableView.isHidden = false
                     
                     print(fetchedResult![0].artistName )
                 }else{
-                    self.tableView.hidden = true
+                    self.tableView.isHidden = true
                 }
                
             }
@@ -90,43 +102,43 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         
     }
     // MARK: - Table view data source
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return self.podcasts.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellIdentifier = "SearchTableViewCell"
         
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! SearchTableViewCell
         
         var podcast:NewPodcast
         
        
-        podcast = self.podcasts[indexPath.row] as! NewPodcast
+        podcast = self.podcasts[(indexPath as NSIndexPath).row] as! NewPodcast
         
         
         let imageUrl:String  =  podcast.artworkUrl100!
         cell.nameLabel.text = podcast.collectionName
-        cell.authorLabel.text = podcast.artistName!.uppercaseString
+        cell.authorLabel.text = podcast.artistName!.uppercased()
         
-        cell.episodesLabel.text = "24 EPISODES".uppercaseString
+        cell.episodesLabel.text = "24 EPISODES".uppercased()
         ImageLoader.sharedLoader.imageForUrl(imageUrl, completionHandler:{(image: UIImage?, url: String) in
             cell.artwork.image = image
         })
         
-        cell.selectionStyle = UITableViewCellSelectionStyle.None
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
         return cell
     }
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        
+        /*
         
         let selectedIndexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
         let newPodcast:NewPodcast = self.podcasts[selectedIndexPath.row] as! NewPodcast
@@ -166,16 +178,16 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
                 
                 print(podcast.artworkUrl100)
             }
-        }
+        }*/
     }
     
-   @IBAction func addPodcasts(sender: AnyObject) {
+   @IBAction func addPodcasts(_ sender: AnyObject) {
     
     
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let navigationController = storyboard.instantiateViewControllerWithIdentifier("SearchNavigationController") as! UINavigationController
+        let navigationController = storyboard.instantiateViewController(withIdentifier: "SearchNavigationController") as! UINavigationController
         
-        self.presentViewController(navigationController, animated: true, completion: nil)
+        self.present(navigationController, animated: true, completion: nil)
 
     //self.fetchAllPodcasts()
     }

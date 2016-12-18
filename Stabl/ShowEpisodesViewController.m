@@ -26,13 +26,18 @@ static NSUInteger const kImportSize = 300;
 {
     NSXMLParser *parser;
     NSMutableDictionary *item;
+    NSMutableString *collection;
     NSMutableString *title;
+    NSMutableString *subtitle;
     NSMutableString *link;
     NSMutableString *description;
     NSMutableString *pubDate;
+
+    NSMutableString * duration;
+    
     NSString *element;
     NSString *channel;
-    
+  
     NewPodcast* currentPodcast;
     
 }
@@ -58,17 +63,26 @@ static NSUInteger const kImportSize = 300;
 -(void)viewDidLayoutSubviews{
     
     [super viewDidLayoutSubviews];
-   _sectionView.frame = CGRectMake(_sectionView.frame.origin.x, _sectionView.frame.origin.y, _sectionView.frame.size.width, 135);
+   _sectionView.frame = CGRectMake(_sectionView.frame.origin.x,
+                                   _sectionView.frame.origin.y,
+                                   _sectionView.frame.size.width, 135);
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     _titleLabel.text =  _podcast.collectionName;
-  
+  /*
     [[ImageLoader sharedLoader] imageForUrl: _podcast.artworkUrl100  completionHandler:^(UIImage *image, NSString *url) {
         _artwork.image = image;
     }];
   
+   */
+    [[ImageLoader sharedLoader] imageForUrl:_podcast.artworkUrl100  completionHandler:^(UIImage *image, NSString *url) {
+        
+        _artwork.image = image;
+        
+    }];
     
     _dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateStyle = NSDateFormatterLongStyle;
@@ -79,7 +93,7 @@ static NSUInteger const kImportSize = 300;
     NSURL *url = [NSURL URLWithString:@"http://images.apple.com/main/rss/hotnews/hotnews.rss"];
     
     url = [NSURL URLWithString:self.podcast.feedUrl];
-
+    
     NSLog(@"%@",url);
     
     parser = [[NSXMLParser alloc] initWithContentsOfURL:url];
@@ -90,13 +104,22 @@ static NSUInteger const kImportSize = 300;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.navigationController.navigationBar setHidden:YES];
     
+    
+    self.view.backgroundColor = _sectionView.backgroundColor;
+    self.navigationController.navigationBar.translucent = NO;
+    
+    self.navigationController.navigationBar.hidden = NO;
+    
+    //[self.navigationController.navigationBar setHidden:YES];
+    
+    
+    [Global sharedInstance].curMenu = kAllEpisodes;
+    /*
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewPodcast"];
  
     AppDelegate* appDelegate = (AppDelegate*) [UIApplication sharedApplication].delegate;
     
-    NSLog(@"");
     [request setPredicate:[NSPredicate predicateWithFormat:@"collectionName == %@", _podcast.collectionName ]];
     
     NSError *error = nil;
@@ -111,6 +134,7 @@ static NSUInteger const kImportSize = 300;
         NSLog(@"results %@",results);
         [_subscribeBtn setImage:[UIImage imageNamed:@"btn_subscribed"] forState:UIControlStateNormal];
     }
+    */
   
    
 }
@@ -155,21 +179,26 @@ static NSUInteger const kImportSize = 300;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *CellIdentifier = @"CustomTableViewCell";
+    NSString *CellIdentifier = @"SearchTableViewCell";
     
-    CustomTableViewCell *cell = (CustomTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    SearchTableViewCell *cell = (SearchTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if(cell == nil)
     {
-        cell = [[CustomTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[SearchTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
 
     NSDictionary* feed = [_feeds objectAtIndex:indexPath.row];
-
-    cell.label1.text = [feed objectForKey: @"title"];
+    
+ 
+    cell.collectionLabel.text = [feed objectForKey: @"title"];
+    NSArray* array = [[feed objectForKey: @"pubDate"] componentsSeparatedByString:@" "];
+    cell.authorLabel.text = [NSString stringWithFormat:@"%@ %@ %@ %@",[array objectAtIndex:0],[array objectAtIndex:1],[array objectAtIndex:2],[array objectAtIndex:3]];
+    cell.durationLabel.text =  [feed objectForKey: @"duration"];
+    /*
     NSString* dateString = [feed objectForKey: @"pubDate"];
     cell.label2.text = dateString;
-    cell.desc.text =  [feed objectForKey: @"description"];
-    
+    cell.descriptionLabel.text =  [feed objectForKey: @"description"];
+    */
     
     return cell;
 }
@@ -178,11 +207,11 @@ static NSUInteger const kImportSize = 300;
 - (void)tableView:(UITableView *)tableView willDisplayCell:(CustomTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    int numberOfLines = [self numberofLines:cell.desc];
+    //int numberOfLines = [self numberofLines:cell.desc];
     
-    [cell.button setHidden: YES];
-    if(numberOfLines >= 2 )
-        [cell.button setHidden: NO];
+    //[cell.button setHidden: YES];
+    //if(numberOfLines >= 2 )
+    //    [cell.button setHidden: NO];
     
     
 //    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -203,29 +232,38 @@ static NSUInteger const kImportSize = 300;
     
     
     NSDictionary *episode = _feeds[indexPath.row];
+    [[NSNotificationCenter defaultCenter]postNotificationName:kPodecastNotification object:@""
+                                                     userInfo: episode];
+
     
-    AppDelegate* appDelegate = (AppDelegate*) [UIApplication sharedApplication].delegate;
     
-    appDelegate.playerViewController.podcast = _podcast;
-    appDelegate.playerViewController.episode = episode;
-    appDelegate.playerViewController.artwork = _artwork.image;
     
-    if(appDelegate.playerViewController.player.rate != 1.0)
-    {
-        [appDelegate enterFullScreen];
-    }
-    else
-    {
-        [appDelegate exitFullScreen];
-        /*
-         
-         dispatch_queue_t _serialQueue = dispatch_queue_create("com.stabl.stablapp", DISPATCH_QUEUE_SERIAL);
-        dispatch_sync(_serialQueue, ^{ printf("1"); });
-        printf("2");
-        dispatch_sync(_serialQueue, ^{ printf("3"); });
-        printf("4");
-        */
-    }
+//
+//    AppDelegate* appDelegate = (AppDelegate*) [UIApplication sharedApplication].delegate;
+//    
+//    appDelegate.playerViewController.podcast = _podcast;
+//    appDelegate.playerViewController.episode = episode;
+//    appDelegate.playerViewController.artwork = _artwork.image;
+//    //[appDelegate exitFullScreen];
+//    
+//    
+//    
+//    if(appDelegate.playerViewController.player.rate != 1.0)
+//    {
+//        [appDelegate enterFullScreen];
+//    }
+//    else
+//    {
+//        [appDelegate exitFullScreen];
+//        /*
+//         
+//         dispatch_queue_t _serialQueue = dispatch_queue_create("com.stabl.stablapp", DISPATCH_QUEUE_SERIAL);
+//        dispatch_sync(_serialQueue, ^{ printf("1"); });
+//        printf("2");
+//        dispatch_sync(_serialQueue, ^{ printf("3"); });
+//        printf("4");
+//        */
+//    }
 }
 
 
@@ -238,7 +276,9 @@ static NSUInteger const kImportSize = 300;
     if([elementName isEqualToString:@"channel"])
     {
         channel = [[NSMutableString alloc] init];
-        return;
+        
+        collection = [[NSMutableString alloc] init];
+        //return;
     }
     
     if ([element isEqualToString:@"item"]) {
@@ -248,20 +288,31 @@ static NSUInteger const kImportSize = 300;
         link    = [[NSMutableString alloc] init];
         pubDate    = [[NSMutableString alloc] init];
         description    = [[NSMutableString alloc] init];
+        duration = [[NSMutableString alloc] init];
+        subtitle = [[NSMutableString alloc] init];
+    
         
     }
-   
+ 
     
+    if([element isEqualToString:@"itunes:image"])
+    {
+          [item setObject:[attributeDict valueForKey:@"href"] forKey:@"href"];
+    }
     if([element isEqualToString:@"enclosure"])
     {
         NSString *urlValue=[attributeDict valueForKey:@"url"];
         
         NSString *length=[attributeDict valueForKey:@"length"];
-        NSLog(@"urlValue %@",urlValue);
+        
+        
+        //NSLog(@"attributeDict %@",attributeDict);
         [item setObject:urlValue forKey:@"link"];
         [item setObject:length forKey:@"length"];
-        //NSString *type=[attributeDict valueForKey:@"type"];
+       
     }
+    
+
 }
 
 
@@ -269,22 +320,37 @@ static NSUInteger const kImportSize = 300;
    
     if([elementName isEqualToString:@"channel"]){
         
-        [item setObject:description forKey:@"description"];
-        NSLog(@"feeds %@",item);
+      
     }
     if ([elementName isEqualToString:@"item"]) {
         [item setObject:title forKey:@"title"];
         [item setObject:description forKey:@"description"];
+        [item setObject:duration forKey:@"duration"];
         [item setObject:pubDate forKey:@"pubDate"];
-        [_feeds addObject:[item copy]];
-       // NSLog(@"feeds %@",item);
-    }
+  
+        //if(_feeds.count == 0){
+            [_feeds addObject:[item copy]];
+            
+        //    NSLog(@"--feeds %@",item);
+        //}
+        }
+    
+    
+ 
     
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
     
-    if ([element isEqualToString:@"title"]) {
+    //string = [string stringByReplacingOccurrencesOfString:@"\t" withString:@""];
+    //string = [string stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    
+    //string = [string stringByReplacingOccurrencesOfString:@"        " withString:@""];
+    if ([element isEqualToString:@"itunes:duration"]) {
+        [duration appendString:string];
+        NSLog(@"duration %@",duration);
+    }
+    else if ([element isEqualToString:@"title"]) {
         [title appendString:string];
     }
     else if ([element isEqualToString:@"description"]) {
@@ -293,6 +359,8 @@ static NSUInteger const kImportSize = 300;
     else if ([element isEqualToString:@"pubDate"]) {
         [pubDate appendString:string];
     }
+   
+    
 }
 
 - (void)parserDidEndDocument:(NSXMLParser *)parser {
@@ -301,7 +369,11 @@ static NSUInteger const kImportSize = 300;
 }
 
 - (IBAction)backButtonPressed:(id )sender {
-    [self.navigationController popViewControllerAnimated:YES];
+    
+    
+    [[NSNotificationCenter defaultCenter]postNotificationName:kPodecastNotification object:@""
+                                                     userInfo: nil];
+    //[self.navigationController popViewControllerAnimated:YES];
     
     //[self.navigationController dismissViewControllerAnimated:NO completion:nil];
 }
@@ -311,7 +383,7 @@ static NSUInteger const kImportSize = 300;
 }
 
 -(IBAction)subscribe:(id)sender{
-    
+    /*
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
     
@@ -334,9 +406,6 @@ static NSUInteger const kImportSize = 300;
         
         podcast.artistName = self.podcast.artistName;
         podcast.collectionName= self.podcast.collectionName;
-        podcast.trackName= self.podcast.trackName;
-        podcast.artistViewUrl= self.podcast.artistViewUrl;
-        podcast.collectionViewUrl= self.podcast.collectionViewUrl;
         podcast.feedUrl= self.podcast.feedUrl;
         podcast.artworkUrl100= self.podcast.artworkUrl100;
         //podcast.releaseDate= self.podcast.releaseDate;
@@ -348,7 +417,7 @@ static NSUInteger const kImportSize = 300;
     NSError *error = nil;
     if ([appDelegate.managedObjectContext save:&error] == NO) {
         NSAssert(NO, @"Error saving context: %@\n%@", [error localizedDescription], [error userInfo]);
-    }
+    }*/
    
 
 }

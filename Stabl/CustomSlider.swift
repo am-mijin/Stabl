@@ -18,16 +18,16 @@ class CustomSlider: UISlider {
     }
     */
     
-    override func trackRectForBounds(bounds: CGRect) -> CGRect {
+    override func trackRect(forBounds bounds: CGRect) -> CGRect {
         //keeps original origin and width, changes height, you get the idea
         let customBounds = CGRect(origin: bounds.origin, size: CGSize(width: bounds.size.width, height: 50.0))
-        super.trackRectForBounds(customBounds)
+        super.trackRect(forBounds: customBounds)
         return customBounds
     }
     
     //while we are here, why not change the image here as well? (bonus material)
     override func awakeFromNib() {
-        self.setThumbImage(UIImage(named: "slider_thumb"), forState: .Normal)
+        self.setThumbImage(UIImage(named: "slider_thumb"), for: UIControlState())
          
         super.awakeFromNib()
     }

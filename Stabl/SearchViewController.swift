@@ -22,7 +22,7 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationController?.navigationBar.tintColor = UIColor.purpleColor()
+        self.navigationController?.navigationBar.tintColor = UIColor.purple
         self.title = "FIND NEW PODCASTS"
         self.sectionTitle.text = " THIS WEEK FROM STABL"
         searchBar.delegate = self
@@ -33,44 +33,44 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
     }
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBarHidden = true
+        navigationController?.isNavigationBarHidden = true
     }
-    override func prefersStatusBarHidden() -> Bool {
-        return navigationController?.navigationBarHidden == false
+    override var prefersStatusBarHidden : Bool {
+        return navigationController?.isNavigationBarHidden == false
     }
     
-    override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
-        return UIStatusBarAnimation.Slide
+    override var preferredStatusBarUpdateAnimation : UIStatusBarAnimation {
+        return UIStatusBarAnimation.slide
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return .lightContent
     }
     
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         
     }
     
-    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         
     }
     
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         print("searchBarCancelButtonClicked")
     }
   
     
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
       
       
         let aString: String = self.searchBar.text!
-        let newString = aString.stringByReplacingOccurrencesOfString(" ", withString: "+")
+        let newString = aString.replacingOccurrences(of: " ", with: "+")
 
         if(search == true)
         {
@@ -87,52 +87,41 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                 print(json!)
                 
                 self.results.removeAllObjects()
-                if ((json?.objectForKey("results") ) != nil)
+                if ((json?.object(forKey: "results") ) != nil && (json?.object(forKey: "results") as! NSArray).count > 0)
                 {
-                    let array =  json?.objectForKey("results") as! NSMutableArray
-                    for var i = 0; i<array.count;i++ {
+                    self.tableView.isHidden = false
+                    let array =  json?.object(forKey: "results") as! NSMutableArray
+                    
+                    if(array.count == 0){
+                        
+                        self.tableView.isHidden = true
+                    }
+                    for i in 0 ..< array.count {
                         let dic  = array[i] as! NSDictionary
                         
-                        let artistId = dic.objectForKey("artistId") as! Int
-                        let artistName = dic.objectForKey("artistName")as! String
-                        let collectionId = dic.objectForKey("collectionId") as! Int
-                        let collectionName = dic.objectForKey("collectionName") as! String
-                        let trackName = dic.objectForKey("trackName") as! String
-                        let artistViewUrl = dic.objectForKey("artistViewUrl") as! String
-                        let collectionViewUrl = dic.objectForKey("collectionViewUrl") as! String
-                        let feedUrl = dic.objectForKey("feedUrl") as! String
-                        let artworkUrl100 = dic.objectForKey("artworkUrl100") as! String
+                        let artistId = 0
+                            //dic.objectForKey("artistId") as! Int
+                        
+                        
+                        let artistName = dic.object(forKey: "artistName")as! String
+                        //let collectionId = dic.objectForKey("collectionId") as! Int
+                        let collectionId = 0
+                        
+                        
+                        
+                        let collectionName = dic.object(forKey: "collectionName") as! String
+                        let trackName = dic.object(forKey: "trackName") as! String
+                        let artistViewUrl = ""
+                            //dic.objectForKey("artistViewUrl") as! String
+                        let collectionViewUrl = dic.object(forKey: "collectionViewUrl") as! String
+                        let feedUrl = dic.object(forKey: "feedUrl") as! String
+                        let artworkUrl100 = dic.object(forKey: "artworkUrl100") as! String
                         //artworkUrl600
-                        let releaseDate = dic.objectForKey("releaseDate") as! String
-                        let country = dic.objectForKey("country") as! String
-                        let primaryGenreName = dic.objectForKey("primaryGenreName") as! String
+                        let releaseDate = dic.object(forKey: "releaseDate") as! String
+                        let country = dic.object(forKey: "country") as! String
+                        let primaryGenreName = dic.object(forKey: "primaryGenreName") as! String
                         
                         /*
-                        let appDelegate    = UIApplication.sharedApplication().delegate as? AppDelegate
-                        
-                        let managedContext = appDelegate!.managedObjectContext
-                     
-                        let entity = NSEntityDescription.insertNewObjectForEntityForName("NewPodcast", inManagedObjectContext:managedContext) as! NewPodcast
-                       
-                       
-                        entity.artistId = artistId
-                        entity.artistName = artistName
-                        
-                        entity.collectionId = collectionId
-                        
-                        entity.trackName = trackName
-                        
-                        entity.artistViewUrl = artistViewUrl
-                        
-                        entity.collectionViewUrl = collectionViewUrl
-                        entity.feedUrl = feedUrl
-                        
-                        entity.artworkUrl100 = artworkUrl100
-                        
-                        entity.releaseDate = releaseDate
-                        
-                        entity.country = country
-                        */
                         let podcast = Podcast(artistId:artistId,
                             collectionId:collectionId,
                             artistName:artistName,
@@ -145,15 +134,18 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                             releaseDate:releaseDate,
                             country:country,primaryGenreName:primaryGenreName)
                         
-                        
+ 
                         self.results.addObject(podcast)
-                        
+                        */
                         //managedContext.rollback()
 
                     }
                     
                 }
-                dispatch_async(dispatch_get_main_queue()) {
+                else{
+                     //self.tableView.isHidden = true
+                }
+                DispatchQueue.main.async {
                     self.searchBar.resignFirstResponder()
                     self.tableView.reloadData()
                 }
@@ -161,32 +153,34 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         }
     }
     
-    func search(term:String, completion: (json:NSDictionary?, error:NSError?)->()) {
+    func search(_ term:String, completion: @escaping (_ json:NSDictionary?, _ error:NSError?)->()) {
      
         search = true
         let urlStr = "https://itunes.apple.com/search?term=\(term)&entity=podcast&limit=25&country=gb"
         
+        //let urlStr = "https://itunes.apple.com/lookup?id=1046028598&entity=podcast"
         print (urlStr)
-        let endpoint : NSURL = NSURL(string: urlStr)!
+        let endpoint : URL = URL(string: urlStr)!
         print(endpoint)
         
-        let session = NSURLSession.sharedSession()
+        
+        let session = URLSession.shared
        
-        let task = session.dataTaskWithURL(endpoint) {
-            (data:NSData?, response:NSURLResponse?, error:NSError?) in
+        let task = session.dataTask(with: endpoint, completionHandler: {
+            (data:Data?, response:URLResponse?, error:NSError?) in
             
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments) as? NSDictionary
+                let json = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? NSDictionary
                
                 
-                completion(json: json, error:nil)
+                completion(json, nil)
             } catch let caught as NSError {
-                completion(json: nil, error:caught)
+                completion(nil, caught)
             } catch {
                 let error: NSError = NSError(domain: "<Your domain>", code: 1, userInfo: nil)
-                completion(json: nil, error:error)
+                completion(nil, error)
             }
-        }
+        } as! (Data?, URLResponse?, Error?) -> Void) 
         
         task.resume()
     }
@@ -194,14 +188,14 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     func getTrending(){
         
         let url = "https://www.audiosear.ch/api/trending"
-        let endpoint = NSURL(string: url)
+        let endpoint = URL(string: url)
        
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithURL(endpoint!) {
-            (data:NSData?, response:NSURLResponse?, error:NSError?) in
+        let session = URLSession.shared
+        let task = session.dataTask(with: endpoint!, completionHandler: {
+            (data:Data?, response:URLResponse?, error:NSError?) in
             
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments) as? NSDictionary
+                let json = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? NSDictionary
               
                 //completion(json: json, error:nil)
             } catch let caught as NSError {
@@ -213,16 +207,16 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
                 //completion(json: nil, error:error)
                 print(error)
             }
-        }
+        } as! (Data?, URLResponse?, Error?) -> Void) 
         
         task.resume()
     }
     // MARK: - Table view data source
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if(search)
         {
@@ -234,32 +228,32 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
        let cellIdentifier = "SearchTableViewCell"
         
-       let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
+       let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! SearchTableViewCell
         
         var podcast:Podcast
         
         if(search)
         {
-            podcast = self.results[indexPath.row] as! Podcast
+            podcast = self.results[(indexPath as NSIndexPath).row] as! Podcast
         }
         else
         {
-             podcast = Global.sharedInstance().feeds[indexPath.row] as! Podcast
+             podcast = Global.sharedInstance().feeds[(indexPath as NSIndexPath).row] as! Podcast
         }
         
        let imageUrl:String  =  podcast.artworkUrl100!
        cell.nameLabel.text = podcast.collectionName
-       cell.authorLabel.text = podcast.artistName!.uppercaseString
+       cell.authorLabel.text = podcast.artistName!.uppercased()
         
-       cell.episodesLabel.text = "24 EPISODES".uppercaseString
+       cell.episodesLabel.text = "24 EPISODES".uppercased()
        ImageLoader.sharedLoader.imageForUrl(imageUrl, completionHandler:{(image: UIImage?, url: String) in
             cell.artwork.image = image
         })
         
-        cell.selectionStyle = UITableViewCellSelectionStyle.None
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
         return cell
     }
    
@@ -303,27 +297,19 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
        
         
-        let selectedIndexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
-        var podcast:Podcast
+        let selectedIndexPath:IndexPath = self.tableView.indexPathForSelectedRow!
+        let podcast:Podcast  = self.results[(selectedIndexPath as NSIndexPath).row] as! Podcast
         
-        if(search == true)
-        {
-           podcast = self.results[selectedIndexPath.row] as! Podcast
-        }
-        else
-        {
-            podcast = Global.sharedInstance().feeds[selectedIndexPath.row] as! Podcast
-        }
         
         if segue.identifier == "PodcastDetailsSegue" {
             
           
-            if let controller = segue.destinationViewController as? ShowEpisodesViewController{
+            if let controller = segue.destination as? ShowEpisodesViewController{
                 controller.podcast = podcast
                 
                 print("-----------")
@@ -339,10 +325,12 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
         vc.podcast = podcast
         
     }*/
-    
-    @IBAction func backButtonPressed(sender: AnyObject) {
+    @IBAction func showAllEpisodes(_ sender: AnyObject) {
+        
+    }
+    @IBAction func backButtonPressed(_ sender: AnyObject) {
       //self.navigationController!.popViewControllerAnimated(true)
-        self .dismissViewControllerAnimated(false, completion: nil)
+        self .dismiss(animated: false, completion: nil)
     }
     
    

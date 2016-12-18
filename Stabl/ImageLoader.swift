@@ -9,7 +9,7 @@
 import UIKit
 
 @objc class ImageLoader:NSObject {
-    var cache = NSCache()
+    var cache = NSCache<AnyObject, AnyObject>()
     class var sharedLoader: ImageLoader {
         struct Singleton {
             static let instance = ImageLoader()
@@ -31,9 +31,9 @@ import UIKit
     }*/
  
     
-    func cachedImage(urlString: String) -> UIImage{
+    func cachedImage(_ urlString: String) -> UIImage{
         
-        let data: NSData? = self.cache.objectForKey(urlString) as? NSData
+        let data: Data? = self.cache.object(forKey: urlString as AnyObject) as? Data
         
         let image = UIImage(data: data!)
           
@@ -41,44 +41,51 @@ import UIKit
     
     }
     
-    func imageForUrl(urlString: String, completionHandler:(image: UIImage?, url: String) -> ()) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {()in
-            var data: NSData? = self.cache.objectForKey(urlString) as? NSData
+    func imageForUrl(_ urlString: String, completionHandler:@escaping (_ image: UIImage?, _ url: String) -> ()) {
+        
+        
+        DispatchQueue.global().async {
+            var data: NSData? = self.cache.object(forKey: urlString as AnyObject) as? NSData
             
             if let goodData = data {
-                let image = UIImage(data: goodData)
-                dispatch_async(dispatch_get_main_queue(), {() in
-                    completionHandler(image: image, url: urlString)
-                })
+                let image = UIImage(data: goodData as Data)
+                
+                DispatchQueue.main.async {
+                    
+                    completionHandler(image, urlString)
+                    
+                }
                 return
             }
             
             
             let endpoint : NSURL = NSURL(string: urlString)!
-            let session = NSURLSession.sharedSession()
+            let session = URLSession.shared
             
-            let task = session.dataTaskWithURL(endpoint) {
-                (data:NSData?, response:NSURLResponse?, error:NSError?) in
-                
+            
+            let task = session.dataTask(with: endpoint as URL) { data, response, error in
                 if (error != nil) {
-                    completionHandler(image: nil, url: urlString)
+                    completionHandler(nil, urlString)
                     return
                 }
                 
                 if data != nil {
                     let image = UIImage(data: data!)
-                    self.cache.setObject(data!, forKey: urlString)
-                    dispatch_async(dispatch_get_main_queue(), {() in
-                        completionHandler(image: image, url: urlString)
-                    })
+                    self.cache.setObject(data! as AnyObject, forKey: urlString as AnyObject)
+                    DispatchQueue.main.async {
+                        
+                        completionHandler(image, urlString)
+                        
+                    }
                     return
                 }
             }
             
+          
+            
             task.resume()
-            
-            
-        })
+        }
+       
         
     }
 

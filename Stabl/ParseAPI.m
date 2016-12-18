@@ -432,6 +432,166 @@ NSString *const kPerkKey = @"perk";
 }*/
 
 
++ (void)random:(id)genres  duration_min:(int)duration_min duration_max:(int)duration_max pubDate:(NSString*)pubDate max :(int) max block:(void (^)(NSArray* array, NSError *error))completionBlock{
+    NSURLSessionConfiguration *sessionConfig =
+    [NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    [sessionConfig setHTTPAdditionalHeaders:@{
+                                              @"Content-Type": @"application/json",
+                                              @"X-Parse-Application-Id": @"stabl",
+                                              @"X-Parse-REST-API-Key": @"Gu1gsy"
+                                              }
+     ];
+    
+    NSURLSession *session =
+    [NSURLSession sessionWithConfiguration:sessionConfig delegate:self
+                             delegateQueue:nil];
+    
+    NSString *urlString = @"https://stabl.herokuapp.com/parse/functions/random";
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString:urlString]
+                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                       timeoutInterval:60.0];
+    
+    /*
+    NSMutableArray* genres = [[NSMutableArray alloc] init];
+    [genres addObject:@"Comedy"];
+    [genres addObject:@"History"];
+    */
+    
+    NSDictionary* dic = @{@"genres" : genres,
+                          @"max": [NSNumber numberWithInt:max],
+                          @"duration_min" :[NSNumber numberWithInt:duration_min],
+                          @"duration_max" :[NSNumber numberWithInt:duration_max],
+                          @"pubDate" :pubDate,
+                          
+                          };
+    
+    
+    NSData* json = [NSJSONSerialization dataWithJSONObject:dic options:0 error:nil];
+    NSLog(@"genres %@",dic);
+    
+    
+    [request setHTTPBody:json];
+    
+    [request setHTTPMethod:@"POST"];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request
+                                            completionHandler:
+                                  ^(NSData *_Nullable data, NSURLResponse *_Nullable response, NSError *_Nullable error) {
+                                      
+                                      
+                                      
+                                      if(error)
+                                          NSLog(@"error %@", error.localizedDescription);
+                                      
+                                      @try {
+                                          
+                                          //NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                                          
+                                          //NSLog(@"string %@", string);
+                                          
+                                          NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+                                          
+                                          //NSLog(@"random %@", json);
+                                          if([json objectForKey:@"error"])
+                                          {
+                                              NSLog(@"error");
+                                              return;
+                                          }
+                                     
+                                          
+                                          if(json != nil){
+                                              
+                                              NSLog(@"json %@",json);
+                                              completionBlock([json objectForKey:@"result"],nil);
+                                          }else{
+                                              NSLog(@" nil error");
+                                          }
+                                          
+                                          
+                                      }
+                                      @catch (NSException *exception) {
+                                          
+                                      }
+                                      
+                                      
+                                  }];
+    [task resume];
+}
+
++(void)test{
+    
+    NSURLSessionConfiguration *sessionConfig =
+    [NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    [sessionConfig setHTTPAdditionalHeaders:@{
+                                              @"Content-Type": @"application/json",
+                                              @"X-Parse-Application-Id": @"stabl",
+                                              @"X-Parse-REST-API-Key": @"Gu1gsy"
+                                              }
+     ];
+    
+    NSURLSession *session =
+    [NSURLSession sessionWithConfiguration:sessionConfig delegate:self
+                             delegateQueue:nil];
+    
+    NSString *urlString = @"https://stabl.herokuapp.com/parse/functions/random";
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString:urlString]
+                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                       timeoutInterval:60.0];
+    
+    
+    NSMutableArray* genres = [[NSMutableArray alloc] init];
+    [genres addObject:@"Comedy"];
+    [genres addObject:@"History"];
+    
+    NSDictionary* dic = @{@"genres" : genres,
+                          @"duration_min" :[NSNumber numberWithInt:1755],
+                          @"duration_max" :[NSNumber numberWithInt:1755],
+                          
+                          };
+    
+    
+    NSData* json = [NSJSONSerialization dataWithJSONObject:dic options:0 error:nil];
+    
+    
+    [request setHTTPBody:json];
+    
+    [request setHTTPMethod:@"POST"];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request
+                                            completionHandler:
+                                  ^(NSData *_Nullable data, NSURLResponse *_Nullable response, NSError *_Nullable error) {
+                                      
+                                      
+                                      
+                                      if(error)
+                                          NSLog(@"error %@", error.localizedDescription);
+                                      
+                                      @try {
+                                          
+                                          //NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                                          
+                                          //NSLog(@"string %@", string);
+                                          NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+                                          
+                                          
+                                          NSLog(@"random %@", json);
+                                          if([json objectForKey:@"error"])
+                                          {
+                                              NSLog(@"error");
+                                              return;
+                                          }
+                                          
+                                          
+                                      }
+                                      @catch (NSException *exception) {
+                                          
+                                      }
+                                      
+                                      
+                                  }];
+    [task resume];
+    
+}
 
 
 @end

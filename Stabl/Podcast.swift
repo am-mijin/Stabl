@@ -14,71 +14,94 @@ class Podcast: NSObject {
     var collectionId : Int!
     var artistName : String!
     var collectionName : String!
-    var trackName : String!
-    var artistViewUrl : String!
-    var collectionViewUrl : String!
+    var title: String!
+    var desc: String!
+    var genres: NSArray!
+    var enclosure: NSDictionary!
+//    var trackName : String!
+//    var artistViewUrl : String!
     var feedUrl : String!
+    var artworkUrl30 : String!
+    var artworkUrl60 : String!
     var artworkUrl100 : String!
-    var releaseDate : NSDate!
+    var artworkUrl600 : String!
+    var pubDate : NSDate!
     var country : String!
+    var currency : String!
     var primaryGenreName : String!
-  
+    var collectionPrice: Float!
+    var trackCount: Int!
+    var duration: Int!
+    var releaseDate: String!
     
-    init(artistId : Int, collectionId : Int, artistName : String, collectionName : String, trackName : String, artistViewUrl : String, collectionViewUrl : String,feedUrl : String, artworkUrl100 : String, releaseDate : String, country : String, primaryGenreName : String) {
+    init( artistName : String, collectionId : Int, collectionName : String, title : String, description: String, genres : NSArray,
+         duration: Int, enclosure : NSDictionary, feedUrl : String, artworkUrl100 : String, releaseDate : String, collectionPrice : Float, country : String, currency: String, primaryGenreName : String, trackCount:Int) {
         
-        self.artistId = artistId
+        //self.artistId = artistId
         self.collectionId = collectionId
         self.artistName = artistName
         self.collectionName = collectionName
-        self.trackName = trackName
-        self.artistViewUrl = artistViewUrl
-        self.collectionViewUrl = collectionViewUrl
+        self.title = title
+        self.desc = description
+        self.genres = genres
+        self.enclosure = enclosure
         self.feedUrl = feedUrl
         self.artworkUrl100 = artworkUrl100
+        self.collectionPrice = collectionPrice
         
-//        let dateFormatter = NSDateFormatter()
-//        dateFormatter.dateFormat = "EEEE, h a"
-//        
-//        let dateString = dateFormatter.stringFromDate(releaseDate)
-        
-        let dateFormatter = NSDateFormatter()
+        self.duration = duration
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        self.releaseDate = dateFormatter.dateFromString(releaseDate)
-        
+        self.releaseDate = releaseDate
+        //self.pubDate = dateFormatter.date(from: pubDate)
         self.country = country
+        self.currency = currency
         self.primaryGenreName = primaryGenreName
+        
+        self.trackCount = trackCount
         super.init()
         
     }
+    
     required init(coder aDecoder: NSCoder) {
-        self.artistId = aDecoder.decodeObjectForKey("artistId") as! Int
-        self.collectionId = aDecoder.decodeObjectForKey("collectionId") as! Int
-        self.artistName = aDecoder.decodeObjectForKey("artistName") as! String
-        self.collectionName = aDecoder.decodeObjectForKey("collectionName") as! String
-        self.trackName = aDecoder.decodeObjectForKey("trackName") as! String
-        self.artistViewUrl = aDecoder.decodeObjectForKey("artistViewUrl") as! String
-        self.collectionViewUrl = aDecoder.decodeObjectForKey("collectionViewUrl") as! String
-        self.feedUrl = aDecoder.decodeObjectForKey("feedUrl") as! String
-        self.artworkUrl100 = aDecoder.decodeObjectForKey("artworkUrl100") as! String
-        self.releaseDate = aDecoder.decodeObjectForKey("releaseDate") as! NSDate
-        self.country = aDecoder.decodeObjectForKey("country") as! String
-        self.primaryGenreName = aDecoder.decodeObjectForKey("primaryGenreName") as! String
+        
+        self.trackCount = aDecoder.decodeObject(forKey: "trackCount") as! Int
+        self.artistId = aDecoder.decodeObject(forKey: "artistId") as! Int
+        self.collectionId = aDecoder.decodeObject(forKey: "collectionId") as! Int
+        self.artistName = aDecoder.decodeObject(forKey: "artistName") as! String
+        self.collectionName = aDecoder.decodeObject(forKey: "collectionName") as! String
+        self.collectionPrice = aDecoder.decodeObject(forKey: "collectionPrice") as! Float
+        self.title = aDecoder.decodeObject(forKey: "title") as! String
+        self.desc = aDecoder.decodeObject(forKey: "description") as! String
+        self.feedUrl = aDecoder.decodeObject(forKey: "feedUrl") as! String
+        self.artworkUrl100 = aDecoder.decodeObject(forKey: "artworkUrl100") as! String
+        self.pubDate = aDecoder.decodeObject(forKey: "pubDate") as! Date as NSDate!
+        self.country = aDecoder.decodeObject(forKey: "country") as! String
+        self.currency = aDecoder.decodeObject(forKey: "currency") as! String
+        self.primaryGenreName = aDecoder.decodeObject(forKey: "primaryGenreName") as! String
+        self.genres = aDecoder.decodeObject(forKey: "genres") as! NSArray
+        self.enclosure = aDecoder.decodeObject(forKey: "enclosure") as! NSDictionary
         
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeInteger(self.artistId, forKey: "artistId")
-        aCoder.encodeInteger(self.collectionId, forKey: "collectionId")
-        aCoder.encodeObject(self.artistName, forKey: "artistName")
-        aCoder.encodeObject(self.collectionName, forKey: "collectionName")
-        aCoder.encodeObject(self.trackName, forKey: "trackName")
-        aCoder.encodeObject(self.artistViewUrl, forKey: "artistViewUrl")
-        aCoder.encodeObject(self.collectionViewUrl, forKey: "collectionViewUrl")
-        aCoder.encodeObject(self.feedUrl, forKey: "feedUrl")
-        aCoder.encodeObject(self.artworkUrl100, forKey: "artworkUrl100")
-        aCoder.encodeObject(self.releaseDate, forKey: "releaseDate")
-        aCoder.encodeObject(self.country, forKey: "country")
-        aCoder.encodeObject(self.primaryGenreName, forKey: "primaryGenreName")
+    func encodeWithCoder(_ aCoder: NSCoder) {
+        aCoder.encode(self.artistId, forKey: "artistId")
+        aCoder.encode(self.collectionId, forKey: "collectionId")
+        aCoder.encode(self.artistName, forKey: "artistName")
+        aCoder.encode(self.collectionName, forKey: "collectionName")
+        aCoder.encode(self.desc, forKey: "description")
+        aCoder.encode(self.title, forKey: "title")
+        aCoder.encode(self.feedUrl, forKey: "feedUrl")
+        aCoder.encode(self.artworkUrl100, forKey: "artworkUrl100")
+        aCoder.encode(self.pubDate, forKey: "pubDate")
+        aCoder.encode(self.country, forKey: "country")
+        aCoder.encode(self.currency, forKey: "currency")
+        aCoder.encode(self.primaryGenreName, forKey: "primaryGenreName")
+       
+        aCoder.encode(self.genres, forKey: "genres")
+        aCoder.encode(self.enclosure, forKey: "enclosure")
+        
+        aCoder.encode(self.trackCount, forKey: "trackCount")
+        aCoder.encode(self.collectionPrice, forKey: "collectionPrice")
     }
 }

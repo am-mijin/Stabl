@@ -23,8 +23,9 @@ static Global *instance = nil;
 {
     if(self = [super init])
     {
-        _feeds =[NSMutableArray new];
-        
+        _feeds = [NSMutableArray new];
+        _genres = [NSMutableArray new];
+        _isFirstTime = YES;
     }
     return self;
 }

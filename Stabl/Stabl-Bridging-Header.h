@@ -6,12 +6,13 @@
 //  Copyright © 2016 Mijin Cho. All rights reserved.
 //
 #import <Parse/Parse.h>
-#import <ParseUI/ParseUI.h>
+//#import <ParseUI/ParseUI.h>
 #import <Bolts/Bolts.h>
 #import "Global.h"
-//#import "Podcast.h"
+#import "BaseViewController.h"
 #import "ShowEpisodesViewController.h"
 
 #import "AAPLPlayerViewController.h"
 
 #import <CoreData/CoreData.h>
+#import "ParseAPI.h"

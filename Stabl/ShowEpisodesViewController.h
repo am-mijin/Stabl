@@ -8,8 +8,10 @@
 
 
 #import <UIKit/UIKit.h>
+
+#import "BaseViewController.h"
 @class Podcast;
-@interface ShowEpisodesViewController : UIViewController <NSXMLParserDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface ShowEpisodesViewController : BaseViewController <NSXMLParserDelegate,UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, strong) Podcast *podcast;
 
 @end
