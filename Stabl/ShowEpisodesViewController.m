@@ -85,9 +85,9 @@ static NSUInteger const kImportSize = 300;
     }];
     
     _dateFormatter = [[NSDateFormatter alloc] init];
-    self.dateFormatter.dateStyle = NSDateFormatterLongStyle;
+    self.dateFormatter.dateStyle = NSDateFormatterShortStyle;
     self.dateFormatter.timeStyle = NSDateFormatterNoStyle;
-    self.dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"US"];
+    self.dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"UK"];
     // Do any additional setup after loading the view.
     _feeds = [NSMutableArray new];
     NSURL *url = [NSURL URLWithString:@"http://images.apple.com/main/rss/hotnews/hotnews.rss"];
@@ -192,8 +192,11 @@ static NSUInteger const kImportSize = 300;
  
     cell.collectionLabel.text = [feed objectForKey: @"title"];
     NSArray* array = [[feed objectForKey: @"pubDate"] componentsSeparatedByString:@" "];
-    cell.authorLabel.text = [NSString stringWithFormat:@"%@ %@ %@ %@",[array objectAtIndex:0],[array objectAtIndex:1],[array objectAtIndex:2],[array objectAtIndex:3]];
+    cell.authorLabel.text = [NSString stringWithFormat:@"%@ %@ %@",[array objectAtIndex:1],[array objectAtIndex:2],[array objectAtIndex:3]];
     cell.durationLabel.text =  [feed objectForKey: @"duration"];
+    cell.button.tag = indexPath.row;
+    
+    
     /*
     NSString* dateString = [feed objectForKey: @"pubDate"];
     cell.label2.text = dateString;
@@ -379,6 +382,28 @@ static NSUInteger const kImportSize = 300;
 }
 
 - (IBAction)show_notes:(id )sender {
+    
+    
+    NotesViewController *controller = (NotesViewController*)[self.storyboard instantiateViewControllerWithIdentifier:@"NotesViewController"];
+    controller.modalPresentationStyle = UIModalPresentationOverFullScreen;
+    
+    Podcast* podcast = self.podcast;
+    NSDictionary* feed = [_feeds objectAtIndex:[sender tag]];
+    NSString* desc = [feed objectForKey: @"description"];
+    
+    [Constants setString:desc];
+    
+    
+    desc = [Constants htmlEncodedString];
+    podcast.desc =  desc;
+    
+    
+    controller.podcast = podcast;
+    
+    [self presentViewController:controller animated:NO completion:nil];
+
+    
+   
 
 }
 

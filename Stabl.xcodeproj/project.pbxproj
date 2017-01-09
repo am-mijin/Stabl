@@ -45,6 +45,7 @@
 		4882591E1D8E04B000F9B277 /* SelectDurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4882591D1D8E04B000F9B277 /* SelectDurationViewController.swift */; };
 		488259241D8E29F600F9B277 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 488259231D8E29F600F9B277 /* BaseViewController.m */; };
 		488259251D8E29F600F9B277 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 488259231D8E29F600F9B277 /* BaseViewController.m */; };
+		489A9A4F1E166ADD006C3481 /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489A9A4E1E166ADD006C3481 /* NotesViewController.swift */; };
 		48BD3E031CFBB25A0028FC48 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48BD3E021CFBB25A0028FC48 /* MediaPlayer.framework */; };
 		48E0E2291C4ECC050018334D /* ParseAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 48E0E2281C4ECC050018334D /* ParseAPI.m */; };
 		48E0E22C1C4ED1E40018334D /* Global.m in Sources */ = {isa = PBXBuildFile; fileRef = 48E0E22B1C4ED1E40018334D /* Global.m */; };
@@ -135,6 +136,7 @@
 		4882591D1D8E04B000F9B277 /* SelectDurationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectDurationViewController.swift; sourceTree = "<group>"; };
 		488259221D8E29F600F9B277 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
 		488259231D8E29F600F9B277 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
+		489A9A4E1E166ADD006C3481 /* NotesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotesViewController.swift; sourceTree = "<group>"; };
 		48BD3E021CFBB25A0028FC48 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		48E0E2271C4ECC050018334D /* ParseAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseAPI.h; sourceTree = "<group>"; };
 		48E0E2281C4ECC050018334D /* ParseAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParseAPI.m; sourceTree = "<group>"; };
@@ -272,6 +274,7 @@
 				4855DC381D88B83F00F8FDB1 /* SelectGenresViewController.swift */,
 				4882591D1D8E04B000F9B277 /* SelectDurationViewController.swift */,
 				48350DA41DE26BA400762274 /* SearchResultsViewController.swift */,
+				489A9A4E1E166ADD006C3481 /* NotesViewController.swift */,
 				484E36FC1C38809900520DAA /* ImageLoader.swift */,
 				484E36FA1C387AA300520DAA /* SearchTableViewCell.swift */,
 				481049871C44859A0028AE46 /* CustomTableViewCell.h */,
@@ -660,6 +663,7 @@
 				481049821C44822C0028AE46 /* ShowEpisodesViewController.m in Sources */,
 				480CBEBF1C3DDD6F002791A1 /* RssXMLParser.m in Sources */,
 				488259241D8E29F600F9B277 /* BaseViewController.m in Sources */,
+				489A9A4F1E166ADD006C3481 /* NotesViewController.swift in Sources */,
 				484E36FD1C38809900520DAA /* ImageLoader.swift in Sources */,
 				481049891C44859A0028AE46 /* CustomTableViewCell.m in Sources */,
 				48E0E2521C56F42F0018334D /* AAPLPlayerViewController.m in Sources */,

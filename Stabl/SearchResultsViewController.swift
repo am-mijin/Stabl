@@ -6,8 +6,40 @@
 //  Copyright © 2016 Mijin Cho. All rights reserved.
 //
 
+
+@objc class Constants: NSObject {
+    static var string: String?
+    private override init() {}
+    
+    public class func htmlEncodedString() -> String {
+        return String(htmlEncodedString:string!)
+    }
+}
+
 extension String
 {
+   
+    init(htmlEncodedString: String) {
+        self.init()
+        guard let encodedData = htmlEncodedString.data(using: .utf8) else {
+            self = htmlEncodedString
+            return
+        }
+        
+        let attributedOptions: [String : Any] = [
+            NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
+            NSCharacterEncodingDocumentAttribute: String.Encoding.utf8.rawValue
+        ]
+        
+        do {
+            let attributedString = try NSAttributedString(data: encodedData, options: attributedOptions, documentAttributes: nil)
+            self = attributedString.string
+        } catch {
+            print("Error: \(error)")
+            self = htmlEncodedString
+        }
+    }
+    
     func replace(target: String, withString: String) -> String
     {
         return self.replacingOccurrences(of: target, with: withString, options: NSString.CompareOptions.regularExpression, range: nil)
@@ -201,9 +233,13 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
                                     let title = dic.object(forKey: "title") as! String
                                     let string:String = dic.object(forKey: "description") as! String
                                   
-                                    let description = string.replace(target: "<[^>]+>", withString:"")
+                                    //print (String.init(htmlEncodedString:string))
+                                    let description = String(htmlEncodedString:string)
                                     
-                                    print(description)
+                                        //string.replace(target: "<[^>]+>", withString:"")
+                                    //description = description.replace(target: "&nbsp;", withString:"")
+                                    
+                                    //print(description)
 
                                     let feedUrl = dic.object(forKey: "feedUrl") as! String
                                     let artworkUrl100 = dic.object(forKey: "artworkUrl600") as! String
@@ -376,6 +412,8 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
             cell.artwork.image = image
         })
         
+        cell.button.tag = indexPath.row
+        
         //let releaseDate :NSDate = self.dateFormatter.date(from :podcast.releaseDate) as! NSDate
         
         
@@ -497,9 +535,25 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
         
     }
    
+    @IBAction func about(_ sender: AnyObject) {
+        
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "NotesViewController") as! NotesViewController
+        
+        controller.podcast = self.results.object(at: sender.tag) as? Podcast
+        controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext //All objects and view are transparent
+
+        self.present(controller, animated: false, completion: nil)
+        
+        
+    }
+    
+    
     @IBAction func refresh(_ sender: AnyObject) {
         
         self.search()
+        
     }
     
     /*
