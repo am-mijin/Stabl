@@ -22,6 +22,8 @@ class SearchTableViewCell: UITableViewCell {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var artwork: UIImageView!
+    
+    @IBOutlet weak var artworkButton: UIButton!
 
     override func awakeFromNib() {
         super.awakeFromNib()

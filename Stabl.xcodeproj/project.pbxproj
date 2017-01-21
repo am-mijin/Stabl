@@ -45,6 +45,7 @@
 		4882591E1D8E04B000F9B277 /* SelectDurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4882591D1D8E04B000F9B277 /* SelectDurationViewController.swift */; };
 		488259241D8E29F600F9B277 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 488259231D8E29F600F9B277 /* BaseViewController.m */; };
 		488259251D8E29F600F9B277 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 488259231D8E29F600F9B277 /* BaseViewController.m */; };
+		4887D6FB1E31711500990C8F /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4887D6FA1E31711500990C8F /* SnapshotHelper.swift */; };
 		489A9A4F1E166ADD006C3481 /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489A9A4E1E166ADD006C3481 /* NotesViewController.swift */; };
 		48BD3E031CFBB25A0028FC48 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48BD3E021CFBB25A0028FC48 /* MediaPlayer.framework */; };
 		48E0E2291C4ECC050018334D /* ParseAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 48E0E2281C4ECC050018334D /* ParseAPI.m */; };
@@ -136,6 +137,7 @@
 		4882591D1D8E04B000F9B277 /* SelectDurationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectDurationViewController.swift; sourceTree = "<group>"; };
 		488259221D8E29F600F9B277 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
 		488259231D8E29F600F9B277 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
+		4887D6FA1E31711500990C8F /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
 		489A9A4E1E166ADD006C3481 /* NotesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotesViewController.swift; sourceTree = "<group>"; };
 		48BD3E021CFBB25A0028FC48 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		48E0E2271C4ECC050018334D /* ParseAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseAPI.h; sourceTree = "<group>"; };
@@ -312,6 +314,7 @@
 		484E36E91C380E5000520DAA /* StablUITests */ = {
 			isa = PBXGroup;
 			children = (
+				4887D6FA1E31711500990C8F /* SnapshotHelper.swift */,
 				484E36EA1C380E5000520DAA /* StablUITests.swift */,
 				484E36EC1C380E5000520DAA /* Info.plist */,
 			);
@@ -688,6 +691,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				484E36EB1C380E5000520DAA /* StablUITests.swift in Sources */,
+				4887D6FB1E31711500990C8F /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

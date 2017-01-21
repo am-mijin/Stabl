@@ -177,6 +177,7 @@ static int AAPLPlayerViewControllerKVOContext = 0;
                               int remain = CMTimeGetSeconds( self.duration) - CMTimeGetSeconds(time);
                               
                               int sec = CMTimeGetSeconds(time);
+                              /*
                               NSString* minstr;
                               NSString* secstr;
                               if (sec/60 <10)
@@ -191,18 +192,43 @@ static int AAPLPlayerViewControllerKVOContext = 0;
                               
                               else
                                   secstr= [NSString stringWithFormat:@"%d",(int)sec%60];
-                              
-                              float total = CMTimeGetSeconds( self.duration);
+                              */
+                              int total = CMTimeGetSeconds( self.duration);
                               
                               dispatch_async(dispatch_get_main_queue(), ^{
                                   [UIView animateWithDuration:0.0 animations:^{
+                                     
+                                      int seconds = sec % 60;
+                                      int min = sec / 60;
+                                      int hours = sec / 3600;
+                                      if(hours == 0){
+                                         
+                                              _currentTimeLabel.text = [NSString stringWithFormat:@"%@%d:%@%d",
+                                                                        min <10?@"0":@"",
+                                                                        min,
+                                                                        seconds <10?@"0":@"",
+                                                                        seconds];
+                                         
+                                      }
+                                      else{
+                                          min = (total % 3600) / 60;
+                                          _currentTimeLabel.text = [NSString stringWithFormat:@"%@%d:%@%d:%@%d",
+                                                                    hours <10?@"0":@"",
+                                                                    hours,
+                                                                    min <10?@"0":@"",
+                                                                    min,
+                                                                    seconds <10?@"0":@"",
+                                                                    seconds];
+                                          
+                                          //_currentTimeLabel.text = [NSString stringWithFormat:@"%d:%d:%d",hours, min, seconds];
+                                      }
                                       
-                                      _currentTimeLabel.text = [NSString stringWithFormat:@"%@ : %@",minstr,secstr];
+                                     // _currentTimeLabel.text = [NSString stringWithFormat:@"%@ : %@",minstr,secstr];
                                       
-                                      _remainTimeLabel.text = [NSString stringWithFormat:@"-%@ : %@",minstr,secstr];
+                                     // _remainTimeLabel.text = [NSString stringWithFormat:@"-%@ : %@",minstr,secstr];
                                       
                                       if(sec * (self.view.frame.size.width/total)  <=
-                                         (self.view.frame.size.width -_currentTimeLabel.frame.size.width + 45))
+                                         (self.view.frame.size.width -_currentTimeLabel.frame.size.width + 40))
                                       {
                                           _currentTimeLabel.frame = CGRectMake(sec * (self.view.frame.size.width/total) +5,
                                                                                _currentTimeLabel.frame.origin.y,
@@ -540,8 +566,38 @@ static int AAPLPlayerViewControllerKVOContext = 0;
         self.startTimeLabel.enabled = hasValidDuration;
         self.durationLabel.hidden = NO;
         self.durationLabel.enabled = hasValidDuration;
-        int wholeMinutes = (int)trunc(newDurationSeconds / 60);
-        self.durationLabel.text = [NSString stringWithFormat:@"%d:%02d", wholeMinutes, (int)trunc(newDurationSeconds) - wholeMinutes * 60];
+        
+        int totalSeconds = (int)trunc(newDurationSeconds );
+        int seconds = totalSeconds % 60;
+        int min = totalSeconds / 60;
+        int hours = totalSeconds / 3600;
+        if(hours == 0){
+            
+            self.durationLabel.text = [NSString stringWithFormat:@"%@%d:%@%d",
+                                     
+                                      min <10?@"0":@"",
+                                      min,
+                                      seconds <10?@"0":@"",
+                                      seconds];
+            
+            
+            //self.durationLabel.text = [NSString stringWithFormat:@"%d:%d", min, seconds];
+        }
+        else{
+            min = (totalSeconds % 3600) / 60;
+            
+            self.durationLabel.text = [NSString stringWithFormat:@"%@%d:%@%d:%@%d",
+                                       hours <10?@"0":@"",
+                                       hours,
+                                       min <10?@"0":@"",
+                                       min,
+                                       seconds <10?@"0":@"",
+                                       seconds];
+            
+            
+            //self.durationLabel.text = [NSString stringWithFormat:@"%d:%d:%d",hours, min, seconds];
+        }
+        //self.durationLabel.text = [NSString stringWithFormat:@"%d:%02d", wholeMinutes, (int)trunc(newDurationSeconds) - wholeMinutes * 60];
         
         _totaldurationLabel.text = self.durationLabel.text ;
        
@@ -589,15 +645,17 @@ static int AAPLPlayerViewControllerKVOContext = 0;
 }
 
 // MARK: - Error Handling
-
+//Video is not available. \nPlease try again.
 - (void)handleErrorWithMessage:(NSString *)message error:(NSError *)error {
     NSLog(@"Error occured with message: %@, error: %@.", message, error);
 
     NSString *alertTitle = NSLocalizedString(@"alert.error.title", @"Alert title for errors");
     NSString *defaultAlertMesssage = NSLocalizedString(@"error.default.description", @"Default error message when no NSError provided");
-    UIAlertController *controller = [UIAlertController alertControllerWithTitle:alertTitle message:message ?: defaultAlertMesssage preferredStyle:UIAlertControllerStyleAlert];
-
-    NSString *alertActionTitle = NSLocalizedString(@"alert.error.actions.OK", @"OK on error alert");
+    //UIAlertController *controller = [UIAlertController alertControllerWithTitle:alertTitle message:message ?: defaultAlertMesssage preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"" message:@"Audio is not available. \nPlease try again." preferredStyle:UIAlertControllerStyleAlert];
+    
+    NSString *alertActionTitle = NSLocalizedString(@"OK", @"OK");
     UIAlertAction *action = [UIAlertAction actionWithTitle:alertActionTitle style:UIAlertActionStyleDefault handler:nil];
     [controller addAction:action];
 

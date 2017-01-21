@@ -17,10 +17,10 @@ class NotesViewController: UIViewController {
     @IBOutlet weak var notesLabel: UILabel!
     
     @IBOutlet weak var notesView: UIView!
+    @IBOutlet weak var textview: UITextView!
     
     var podcast : Podcast?
-    var collection : String = ""
-    
+    var subtitle : String = ""
     var author : String = ""
     var notes : String = ""
     
@@ -29,12 +29,12 @@ class NotesViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         self.view.backgroundColor = UIColor.clear
-        self.notesLabel.text =  podcast?.desc
         self.authorLabel.text = podcast?.artistName
-        self.collectionLabel.text = podcast?.collectionName
+        self.collectionLabel.text = subtitle
         self.notesView.clipsToBounds = true;
         self.notesView.layer.cornerRadius = 5;
         
+        textview.text =   podcast?.desc
     }
 
     override func didReceiveMemoryWarning() {

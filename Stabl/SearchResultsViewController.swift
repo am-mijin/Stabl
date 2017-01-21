@@ -165,12 +165,12 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
     
     func search() {
         var images: [UIImage] = []
-        for i in 1...3 {
-            images.append(UIImage(named: "spinner_\(i)")!)
+        for i in 1...4 {
+            images.append(UIImage(named: "loader_spinner_\(i)")!)
         }
         
         self.loadingView.animationImages = images
-        self.loadingView.animationDuration = 0.7
+        self.loadingView.animationDuration = 0.6
         self.loadingView.animationRepeatCount = 0
         self.loadingView.startAnimating()
 
@@ -414,13 +414,11 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
         
         cell.button.tag = indexPath.row
         
+        cell.artworkButton.tag = indexPath.row
         //let releaseDate :NSDate = self.dateFormatter.date(from :podcast.releaseDate) as! NSDate
         
-        
         //cell.dateLabel.text = pubDateFormatter.string(from: releaseDate as Date)
-            
-            
-        
+       
         cell.selectionStyle = UITableViewCellSelectionStyle.none
         return cell
     }
@@ -537,10 +535,10 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
    
     @IBAction func about(_ sender: AnyObject) {
         
-        
+        let podcast : Podcast = (self.results.object(at: sender.tag) as? Podcast)!
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "NotesViewController") as! NotesViewController
-        
+        controller.subtitle = podcast.collectionName
         controller.podcast = self.results.object(at: sender.tag) as? Podcast
         controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext //All objects and view are transparent
 
@@ -568,12 +566,15 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
     }
 
    
-    @IBAction func showAll(sender: AnyObject) {
-        /*
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewController(withIdentifier: "ShowEpisodesViewController") as! ShowEpisodesViewController
+    @IBAction func play(sender: AnyObject) {
+        let podcast:Podcast = self.results[sender.tag] as! Podcast
         
-        controller.podcast = self.results.object(at: sender.tag) as! Podcast
-        self.navigationController!.pushViewController(controller, animated: true)*/
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "PlayerViewController") as! AAPLPlayerViewController
+        
+        controller.episode = nil
+        controller.podcast = podcast
+        self.present(controller, animated: true, completion: nil)
     }
 }

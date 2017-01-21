@@ -306,12 +306,21 @@ static NSUInteger const kImportSize = 300;
     {
         NSString *urlValue=[attributeDict valueForKey:@"url"];
         
-        NSString *length=[attributeDict valueForKey:@"length"];
         
         
         //NSLog(@"attributeDict %@",attributeDict);
         [item setObject:urlValue forKey:@"link"];
-        [item setObject:length forKey:@"length"];
+        
+        
+        @try{
+            
+            NSString *length=[attributeDict valueForKey:@"length"];
+            [item setObject:length forKey:@"length"];
+        }
+        @catch(NSException * e) {
+            NSLog(@"Exception: %@", e);
+        }
+        
        
     }
     
@@ -397,7 +406,7 @@ static NSUInteger const kImportSize = 300;
     desc = [Constants htmlEncodedString];
     podcast.desc =  desc;
     
-    
+    controller.subtitle = [feed objectForKey: @"title"];
     controller.podcast = podcast;
     
     [self presentViewController:controller animated:NO completion:nil];

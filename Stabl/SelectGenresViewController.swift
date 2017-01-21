@@ -13,7 +13,7 @@ class SelectGenresViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     @IBOutlet weak var doneBtn: UIButton!
-    let images: NSArray = ["100x100bb-1","100x100bb-2","100x100bb-3","100x100bb-3","100x100bb-3","100x100bb-3","100x100bb-3","100x100bb-3","100x100bb-3","100x100bb-3","100x100bb-3","100x100bb-3"]
+    let images: NSArray = ["Comedy","Society","History","Arts","Sport","Literature","Science","Politics","Business","Technology","Education","TV"]
     
     let genres: NSArray = ["Comedy","Society & Culture","History","Arts","Sport","Literature" ,"Science & Medicine" ,"News & Politics" ,"Business","Technology" ,"Education","TV & Film"]
     
@@ -93,8 +93,9 @@ class SelectGenresViewController: UIViewController {
         cell.button2.tag = index + 1
         
         cell.selectionStyle = UITableViewCellSelectionStyle.none
-        
-        for string  in Global.sharedInstance().genres{
+        cell.button1.isSelected = false
+        cell.button2.isSelected = false
+        for string  in self.array{
             
             let genre:String = string as! String
             if(genre.caseInsensitiveCompare(cell.label1.text!)  == .orderedSame){
@@ -130,6 +131,8 @@ class SelectGenresViewController: UIViewController {
             
             doneBtn.isEnabled = false
         }
+        
+        //Global.sharedInstance().genres = self.array
         
         print(array)
     }

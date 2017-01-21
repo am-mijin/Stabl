@@ -22,12 +22,12 @@
                                                   forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.shadowImage = [UIImage new];
     self.navigationController.navigationBar.translucent = NO;
-    self.navigationController.view.backgroundColor =  [UIColor clearColor];
+    self.navigationController.view.backgroundColor =  [UIColor whiteColor];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     
     [self.navigationController.navigationBar setTitleTextAttributes:    [NSDictionary dictionaryWithObjectsAndKeys:
-                                                                         [UIColor blackColor], NSForegroundColorAttributeName,
-                                                                         [UIFont fontWithName:@"Dosis- SemiBold" size:18.0], NSFontAttributeName, nil]];
+                                                                        Top_Black, NSForegroundColorAttributeName,
+                                                                         [UIFont fontWithName:@"Dosis- SemiBold" size:23.0], NSFontAttributeName, nil]];
     
     
 }

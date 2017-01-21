@@ -46,8 +46,8 @@ class SelectDurationViewController: BaseViewController {
         
         super.viewWillAppear(animated)
         
-        
-        self.navigationController?.isNavigationBarHidden = true
+        self.title = "How much time do you have?"
+        self.navigationController?.isNavigationBarHidden = false
         if(Global.sharedInstance().isFirstTime  == true){
             Global.sharedInstance().isFirstTime = false
             
@@ -64,7 +64,7 @@ class SelectDurationViewController: BaseViewController {
     }
     
     override var prefersStatusBarHidden : Bool {
-        return true
+        return false
     }
 
     /*
@@ -111,7 +111,7 @@ class SelectDurationViewController: BaseViewController {
         
         switch currentDuration {
         case 15:
-            self.uptoLabel.text = "Upto"
+            self.uptoLabel.text = "Up to"
             self.minutesLabel.text = "Minutes"
             self.durationLabel.text = "15"
             break
