@@ -141,19 +141,26 @@ class SelectGenresViewController: UIViewController {
         
         Global.sharedInstance().genres = self.array
         
+        for genre in
+            
+            Global.sharedInstance().genres{
+                FIRAnalytics.logEvent(withName: kFIREventSelectContent, parameters: [
+                    kFIRParameterItemID: "id-\("genreSelected")" as NSObject,
+                    kFIRParameterItemName:  genre as! NSObject,
+                    kFIRParameterContentType: "cont" as NSObject
+                    ])
+                
+                
+        }
         
+       
         self.dismiss(animated: false, completion: {
         
             
-            let appDelegate:AppDelegate   = UIApplication.shared.delegate as! AppDelegate
+        let appDelegate:AppDelegate   = UIApplication.shared.delegate as! AppDelegate
             
-            appDelegate.save()})
-        /*
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewController(withIdentifier: "SelectDurationViewController") as! SelectDurationViewController
-        controller.genres = self.array
+        appDelegate.save()})
         
-        self.navigationController!.pushViewController(controller, animated: true)*/
     }
     
 

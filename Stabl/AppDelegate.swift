@@ -11,8 +11,8 @@ import CoreData
 import AVFoundation
 import AudioToolbox
 import Parse
-import HockeySDK
-
+//import HockeySDK
+import FirebaseAnalytics
 @UIApplicationMain
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,12 +27,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
      
         
        /*Autosend crash reports*/
+       /*
        BITHockeyManager.shared().configure(withIdentifier: "88329a4ab29a47c79a55a630d6e6216b")
        BITHockeyManager.shared().crashManager.crashManagerStatus  = BITCrashManagerStatus.autoSend
         
        BITHockeyManager.shared().start()
         
-       BITHockeyManager.shared().authenticator.authenticateInstallation(); // This line is obsolete in the crash only build
+       BITHockeyManager.shared().authenticator.authenticateInstallation();
+       // This line is obsolete in the crash only build
+       */
+        
+       FIRApp.configure()
+       
+       FIRAnalytics.logEvent(withName: kFIREventSelectContent, parameters: [
+            kFIRParameterItemID: "id-\("appLaunching")" as NSObject,
+            kFIRParameterItemName: "appLaunching" as NSObject,
+            kFIRParameterContentType: "cont" as NSObject
+            ])
+        
         
        let configuration = ParseClientConfiguration {
             $0.applicationId = "stabl"

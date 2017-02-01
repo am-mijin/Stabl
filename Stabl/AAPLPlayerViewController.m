@@ -11,7 +11,7 @@
 #import "Stabl-Swift.h"
 
 #import "Consts.h"
-#import <HockeySDK/HockeySDK.h>
+//#import <HockeySDK/HockeySDK.h>
 
 #define panGestureRecognizer_Y 250
 
@@ -134,9 +134,15 @@ static int AAPLPlayerViewControllerKVOContext = 0;
         
     }
     
-    BITMetricsManager *metricsManager = [BITHockeyManager sharedHockeyManager].metricsManager;
-    [metricsManager trackEventWithName:[NSString stringWithFormat: @"%@ - %@",self.podcast.collectionName,_episodeLabel.text]];
+    //BITMetricsManager *metricsManager = [BITHockeyManager sharedHockeyManager].metricsManager;
+    //[metricsManager trackEventWithName:[NSString stringWithFormat: @"%@ - %@",self.podcast.collectionName,_episodeLabel.text]];
     
+    [FIRAnalytics logEventWithName:kFIREventSelectContent
+                        parameters:@{
+                                     kFIRParameterItemID:[NSString stringWithFormat:@"id-%@", self.podcast.collectionName],
+                                     kFIRParameterItemName:_episodeLabel.text,
+                                     kFIRParameterContentType:@"cont"
+                                     }];
   
     
     NSString* imageUrl= _podcast.artworkUrl100;

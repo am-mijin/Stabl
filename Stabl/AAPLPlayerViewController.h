@@ -7,7 +7,7 @@
 */
 
 @import UIKit;
-
+@import FirebaseAnalytics;
 @import Foundation;
 @import AVFoundation;
 

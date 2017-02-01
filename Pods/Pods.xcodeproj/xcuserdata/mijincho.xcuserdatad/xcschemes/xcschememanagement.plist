@@ -9,7 +9,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>HockeySDK-HockeySDKResources.xcscheme</key>
+		<key>GoogleToolboxForMac.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -37,32 +37,32 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1BFEDEE0A42A6D54D5F4F9DB013BCB4A</key>
+		<key>15A63078E25D8876FC36E6B8AA1DA820</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>35E848EE6FAA62C5BC8BA81233944C6A</key>
+		<key>257BC1357A83953F4D75DF26D2135E58</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4B2630FD76C387132A7AFE14005867AE</key>
+		<key>510CCB1ECBCC0A6BB5ACA5BB55A11B45</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>81903617B75D0BEB05FA9BA238D7D8B4</key>
+		<key>57A6B34486EADE80DDE54F18E648370F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B8BFF19A3A3AA22022D19ADB471072A1</key>
+		<key>7D8EBBA2F0D5E88A36B098ACEA2F8B17</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D8242BA6AEA2ED848C6C672DC0ADBA21</key>
+		<key>DC43672ACEE42D5AF63FAAFFE6322B6F</key>
 		<dict>
 			<key>primary</key>
 			<true/>

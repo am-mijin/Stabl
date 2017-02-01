@@ -1,24 +1,44 @@
 PODS:
   - Bolts/Tasks (1.8.4)
-  - HockeySDK (4.1.0-beta.2):
-    - HockeySDK/AllFeaturesLib (= 4.1.0-beta.2)
-  - HockeySDK/AllFeaturesLib (4.1.0-beta.2)
+  - Firebase (3.10.0):
+    - Firebase/Core (= 3.10.0)
+  - Firebase/Core (3.10.0):
+    - FirebaseAnalytics (= 3.6.0)
+    - FirebaseCore (= 3.4.5)
+  - FirebaseAnalytics (3.6.0):
+    - FirebaseCore (~> 3.4)
+    - FirebaseInstanceID (~> 1.0)
+    - GoogleInterchangeUtilities (~> 1.2)
+    - GoogleSymbolUtilities (~> 1.1)
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseCore (3.4.5):
+    - GoogleInterchangeUtilities (~> 1.2)
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseInstanceID (1.0.8)
+  - GoogleInterchangeUtilities (1.2.2):
+    - GoogleSymbolUtilities (~> 1.1)
+  - GoogleSymbolUtilities (1.1.2)
+  - GoogleToolboxForMac/Defines (2.1.0)
+  - GoogleToolboxForMac/NSData+zlib (2.1.0):
+    - GoogleToolboxForMac/Defines (= 2.1.0)
   - Parse (1.14.2):
     - Bolts/Tasks (~> 1.8)
 
 DEPENDENCIES:
-  - HockeySDK (from `https://download.hockeyapp.net/preseason/sdk/ios/HockeySDK.podspec`)
+  - Firebase (>= 2.5.1)
   - Parse
-
-EXTERNAL SOURCES:
-  HockeySDK:
-    :podspec: https://download.hockeyapp.net/preseason/sdk/ios/HockeySDK.podspec
 
 SPEC CHECKSUMS:
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
-  HockeySDK: 8735e73d856fedc0b000629e766221b6fc4aff59
+  Firebase: 387f37c7dca894a02708da9ff35ba147040eae9e
+  FirebaseAnalytics: 9c67af0ebeb8d2146c9b4ea2616439affa947b58
+  FirebaseCore: 1e383fdfe37b6b5d6ff88e84204bdee30276af0f
+  FirebaseInstanceID: ba1e640935235e5fac39dfa816fe7660e72e1a8a
+  GoogleInterchangeUtilities: d5bc4d88d5b661ab72f9d70c58d02ca8c27ad1f7
+  GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
+  GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   Parse: 4335d65f40cb3d43190d723144bbe1afb9c38230
 
-PODFILE CHECKSUM: 507bb19f5c0c94572ee4d6e5c9c6c5253b59efc4
+PODFILE CHECKSUM: 6ffdc8b768ee713a8a895335588f21bb373bb003
 
 COCOAPODS: 1.0.1

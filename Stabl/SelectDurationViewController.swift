@@ -8,7 +8,8 @@
 
 import UIKit
 
-import HockeySDK
+import FirebaseAnalytics
+//import HockeySDK
 class SelectDurationViewController: BaseViewController {
     
     @IBOutlet weak var button: UIButton!
@@ -47,6 +48,13 @@ class SelectDurationViewController: BaseViewController {
         super.viewWillAppear(animated)
         
         self.title = "How much time do you have?"
+        
+        
+        if(UIScreen.main.bounds.size.height <= 568.0){
+           
+            self.durationLabel.font = UIFont(name: "Dosis-SemiBold", size: 65)
+        }
+        
         self.navigationController?.isNavigationBarHidden = false
         if(Global.sharedInstance().isFirstTime  == true){
             Global.sharedInstance().isFirstTime = false
@@ -149,7 +157,15 @@ class SelectDurationViewController: BaseViewController {
         controller.genres = self.genres
         controller.min_duration = 0
         controller.max_duration = 0
-        BITHockeyManager.shared().metricsManager.trackEvent(  withName:   eventstr)
+        
+        //BITHockeyManager.shared().metricsManager.trackEvent(  withName:   eventstr)
+        
+        
+        FIRAnalytics.logEvent(withName: kFIREventSelectContent, parameters: [
+            kFIRParameterItemID: "id-\(eventstr)" as NSObject,
+            kFIRParameterItemName: eventstr as NSObject,
+            kFIRParameterContentType: "cont" as NSObject
+            ])
         
         self.navigationController!.pushViewController(controller, animated: true)
         
@@ -186,7 +202,13 @@ class SelectDurationViewController: BaseViewController {
         default:break
         }
         
-        BITHockeyManager.shared().metricsManager.trackEvent(  withName:   eventstr)
+        FIRAnalytics.logEvent(withName: kFIREventSelectContent, parameters: [
+            kFIRParameterItemID: "id-\(eventstr)" as NSObject,
+            kFIRParameterItemName: eventstr as NSObject,
+            kFIRParameterContentType: "cont" as NSObject
+            ])
+        
+        //BITHockeyManager.shared().metricsManager.trackEvent(  withName:   eventstr)
         
         self.navigationController!.pushViewController(controller, animated: true)
     }
@@ -195,7 +217,7 @@ class SelectDurationViewController: BaseViewController {
     @IBAction func feedback(_ sender: AnyObject) {
         
         
-        BITHockeyManager.shared().feedbackManager.showFeedbackComposeView()
+        //BITHockeyManager.shared().feedbackManager.showFeedbackComposeView()
         
     }
   

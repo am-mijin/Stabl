@@ -47,6 +47,7 @@
 		488259251D8E29F600F9B277 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 488259231D8E29F600F9B277 /* BaseViewController.m */; };
 		4887D6FB1E31711500990C8F /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4887D6FA1E31711500990C8F /* SnapshotHelper.swift */; };
 		489A9A4F1E166ADD006C3481 /* NotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 489A9A4E1E166ADD006C3481 /* NotesViewController.swift */; };
+		48B50C041E429FB7006D6910 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 48B50C031E429FB7006D6910 /* GoogleService-Info.plist */; };
 		48BD3E031CFBB25A0028FC48 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48BD3E021CFBB25A0028FC48 /* MediaPlayer.framework */; };
 		48E0E2291C4ECC050018334D /* ParseAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 48E0E2281C4ECC050018334D /* ParseAPI.m */; };
 		48E0E22C1C4ED1E40018334D /* Global.m in Sources */ = {isa = PBXBuildFile; fileRef = 48E0E22B1C4ED1E40018334D /* Global.m */; };
@@ -139,6 +140,7 @@
 		488259231D8E29F600F9B277 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
 		4887D6FA1E31711500990C8F /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
 		489A9A4E1E166ADD006C3481 /* NotesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotesViewController.swift; sourceTree = "<group>"; };
+		48B50C031E429FB7006D6910 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		48BD3E021CFBB25A0028FC48 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		48E0E2271C4ECC050018334D /* ParseAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseAPI.h; sourceTree = "<group>"; };
 		48E0E2281C4ECC050018334D /* ParseAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParseAPI.m; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 				481049811C44822C0028AE46 /* ShowEpisodesViewController.m */,
 				484E36D31C380E5000520DAA /* LaunchScreen.storyboard */,
 				484E36D61C380E5000520DAA /* Info.plist */,
+				48B50C031E429FB7006D6910 /* GoogleService-Info.plist */,
 				484E36CE1C380E4F00520DAA /* Stabl.xcdatamodeld */,
 				4801B84F1C8BAD32005064F8 /* NewPodcast+CoreDataProperties.swift */,
 				4801B8501C8BAD32005064F8 /* NewPodcast.swift */,
@@ -498,6 +501,7 @@
 			files = (
 				4882591A1D8E03BA00F9B277 /* Dosis-Medium.ttf in Resources */,
 				484E36D51C380E5000520DAA /* LaunchScreen.storyboard in Resources */,
+				48B50C041E429FB7006D6910 /* GoogleService-Info.plist in Resources */,
 				484E36D21C380E5000520DAA /* Assets.xcassets in Resources */,
 				488259171D8E03BA00F9B277 /* Dosis-Bold.ttf in Resources */,
 				4882591B1D8E03BA00F9B277 /* Dosis-SemiBold.ttf in Resources */,
