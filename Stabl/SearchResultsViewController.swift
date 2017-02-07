@@ -485,7 +485,7 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "PlayerViewController") as! AAPLPlayerViewController
-        
+     
         controller.episode = nil
         controller.podcast = podcast
         self.present(controller, animated: true, completion: nil)

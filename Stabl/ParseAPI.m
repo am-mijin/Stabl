@@ -1,10 +1,11 @@
 //
-//  Utility.m
-//  ilovestage
+//  ParseAPI.m
+//  Stabl
 //
-//  Created by Mijin Cho on 16/05/2015.
-//  Copyright (c) 2015 Rightster. All rights reserved.
+//  Created by mijin on 26/01/2016.
+//  Copyright © 2016 mijin. All rights reserved.
 //
+
 
 #import "ParseAPI.h"
 

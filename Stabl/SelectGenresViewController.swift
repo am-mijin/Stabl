@@ -145,7 +145,7 @@ class SelectGenresViewController: UIViewController {
             
             Global.sharedInstance().genres{
                 FIRAnalytics.logEvent(withName: kFIREventSelectContent, parameters: [
-                    kFIRParameterItemID: "id-\("genreSelected")" as NSObject,
+                    kFIRParameterItemID: "id-\(genre)" as NSObject,
                     kFIRParameterItemName:  genre as! NSObject,
                     kFIRParameterContentType: "cont" as NSObject
                     ])

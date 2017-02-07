@@ -1,11 +1,10 @@
 //
 //  BaseViewController.h
-//  Den
+//  Stabl
 //
 //  Created by mijin on 26/01/2016.
 //  Copyright © 2016 mijin. All rights reserved.
 //
-
 #import <UIKit/UIKit.h>
 #import "consts.h"
 

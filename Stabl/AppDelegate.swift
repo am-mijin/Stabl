@@ -38,14 +38,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        */
         
        FIRApp.configure()
+        
+
+     
+        
+        /*
        
-       FIRAnalytics.logEvent(withName: kFIREventSelectContent, parameters: [
-            kFIRParameterItemID: "id-\("appLaunching")" as NSObject,
-            kFIRParameterItemName: "appLaunching" as NSObject,
-            kFIRParameterContentType: "cont" as NSObject
+         FIRAnalytics.logEvent(withName: "share_image", parameters: [
+            "name": "" as NSObject,
+            "full_text": "" as NSObject
             ])
-        
-        
+         */
        let configuration = ParseClientConfiguration {
             $0.applicationId = "stabl"
             $0.server = "https://stabl.herokuapp.com/parse"
