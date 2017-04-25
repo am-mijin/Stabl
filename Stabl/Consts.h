@@ -15,7 +15,6 @@ typedef enum CurrentMenu
     kHome,
     kSearch,
     kAllEpisodes
-   
     
 }CurrentMenu;
 

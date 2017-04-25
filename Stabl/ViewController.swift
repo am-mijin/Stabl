@@ -47,7 +47,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         
         //fetchAllPodcasts()
     }
-    
+    /*
     func saveName(_ name : String)
     {
         
@@ -63,7 +63,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         podcasts.append(podcast)
         
     }
-    
+ 
     func fetchAllPodcasts()
     {
         let appDelegate    = UIApplication.shared.delegate as! AppDelegate
@@ -101,6 +101,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         }
         
     }
+   */
     // MARK: - Table view data source
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -189,7 +190,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         
         self.present(navigationController, animated: true, completion: nil)
 
-    //self.fetchAllPodcasts()
+        //self.fetchAllPodcasts()
     }
     
   

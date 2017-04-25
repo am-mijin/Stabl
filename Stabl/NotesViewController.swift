@@ -19,7 +19,7 @@ class NotesViewController: UIViewController {
     @IBOutlet weak var notesView: UIView!
     @IBOutlet weak var textview: UITextView!
     
-    var podcast : Podcast?
+    var podcast : NewPodcast?
     var subtitle : String = ""
     var author : String = ""
     var notes : String = ""

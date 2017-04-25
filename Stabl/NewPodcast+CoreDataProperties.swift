@@ -22,9 +22,18 @@ extension NewPodcast {
     @NSManaged var artistViewUrl: String?
     @NSManaged var collectionViewUrl: String?
     @NSManaged var feedUrl: String?
+    @NSManaged var playUrl: String?
     @NSManaged var artworkUrl100: String?
     @NSManaged var releaseDate: String?
     @NSManaged var country: String?
     @NSManaged var primaryGenreName: String?
+    @NSManaged var title: String?
+    @NSManaged var desc: String?
+    @NSManaged var trackCount: NSNumber?
+    @NSManaged var currentTrack: NSNumber?
+    @NSManaged var currency: String?
+    @NSManaged var duration: NSNumber?
+    @NSManaged var collectionPrice: NSNumber?
 
+    
 }

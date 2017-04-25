@@ -7,11 +7,32 @@
 //
 
 import UIKit
-
 import FirebaseAnalytics
-//import HockeySDK
-class SelectDurationViewController: BaseViewController {
-    
+
+extension UIColor {
+    convenience init(hex: String) {
+        let scanner = Scanner(string: hex)
+        scanner.scanLocation = 0
+        
+        var rgbValue: UInt64 = 0
+        
+        scanner.scanHexInt64(&rgbValue)
+        
+        let r = (rgbValue & 0xff0000) >> 16
+        let g = (rgbValue & 0xff00) >> 8
+        let b = rgbValue & 0xff
+        
+        self.init(
+            red: CGFloat(r) / 0xff,
+            green: CGFloat(g) / 0xff,
+            blue: CGFloat(b) / 0xff, alpha: 1
+        )
+    }
+}
+
+class SelectDurationViewController: BaseViewController,UIViewControllerTransitioningDelegate {
+  
+    @IBOutlet weak var genreButton: UIButton!
     @IBOutlet weak var button: UIButton!
     
     @IBOutlet weak var minusBtn: UIButton!
@@ -24,6 +45,10 @@ class SelectDurationViewController: BaseViewController {
     var genres: NSArray = []
     
     var duration :Int = 0
+    let transition = BubbleTransition()
+    var startingPoint:CGPoint?
+    var transition_color:UIColor?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,7 +80,6 @@ class SelectDurationViewController: BaseViewController {
             self.durationLabel.font = UIFont(name: "Dosis-SemiBold", size: 65)
         }
         
-        self.navigationController?.isNavigationBarHidden = false
         if(Global.sharedInstance().isFirstTime  == true){
             Global.sharedInstance().isFirstTime = false
             
@@ -68,6 +92,7 @@ class SelectDurationViewController: BaseViewController {
         }
         
         
+        self.navigationController?.isNavigationBarHidden = true
         genres = Global.sharedInstance().genres
     }
     
@@ -75,15 +100,24 @@ class SelectDurationViewController: BaseViewController {
         return false
     }
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        let button:UIButton = sender as! UIButton
+      
+        let controller = segue.destination
+        controller.transitioningDelegate = self
+        controller.modalPresentationStyle = .custom
+        
+        self.startingPoint = button.center
+        self.transition_color = UIColor(hex:"0x21092B")
+        
+        //if(segue.identifier == "Select Genre")
     }
-    */
+    
     @IBAction func selectGenres(sender: UIButton) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
@@ -220,5 +254,21 @@ class SelectDurationViewController: BaseViewController {
         //BITHockeyManager.shared().feedbackManager.showFeedbackComposeView()
         
     }
+    
+   
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.transitionMode = .present
+        transition.startingPoint = self.startingPoint!
+        transition.bubbleColor = self.transition_color!
+        return transition
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        transition.transitionMode = .dismiss
+        transition.startingPoint =  self.startingPoint!
+        transition.bubbleColor = self.transition_color!
+        return transition
+    }
+    
   
 }

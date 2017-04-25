@@ -143,7 +143,7 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
             
             let userInfo = notification.userInfo
             
-            let podcast:Podcast = userInfo!["podcast"]  as! Podcast
+            let podcast:NewPodcast = userInfo!["podcast"]  as! NewPodcast
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "ShowEpisodesViewController") as! ShowEpisodesViewController
             vc.podcast = podcast
@@ -251,6 +251,27 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
                                     let releaseDate:String = dic.object(forKey: "releaseDate") as! String
                                     let pubDate :NSDate = self.dateFormatter.date(from :dic.object(forKey: "releaseDate") as! String) as! NSDate
                                     
+                                  
+                                    let context = CoreDataStackManager.sharedInstance().managedObjectContext
+                                    let podcast = NSEntityDescription.insertNewObject(forEntityName: "NewPodcast", into: context) as! NewPodcast
+                                    
+                                    podcast.artistName = artistName
+                                    podcast.collectionName = collectionName
+                                    podcast.title = title
+                                    podcast.collectionName = collectionName
+                                    
+                                    podcast.desc = description
+                                    podcast.artworkUrl100 = artworkUrl100
+                                    podcast.feedUrl = feedUrl
+                                    podcast.trackCount = trackCount as NSNumber?
+                                    podcast.releaseDate = releaseDate
+                                    podcast.country = country
+                                    podcast.playUrl = enclosure.object(forKey: "url") as! String?
+                                    podcast.collectionPrice = collectionPrice as NSNumber?
+                                    //print(enclosure.object(forKey: "duration"))
+                                    
+ 
+                                    /*
                                     let podcast = Podcast(
                                         artistName:artistName,
                                         collectionId:collectionId,
@@ -269,8 +290,7 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
                                         primaryGenreName:primaryGenreName,
                                         trackCount:trackCount )
                                     
-                                    
-                                    //self.results.add(podcast)
+                                    */
                                     self.sortArray.setValue(podcast, forKey: releaseDate)
                                     
                                     
@@ -278,12 +298,12 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
                                 
                                 
                                 let allkeys:NSArray = self.sortArray.allKeys as NSArray
-                                let array:NSArray = allkeys.sortedArray(using: "compare:")  as NSArray
+                                let array:NSArray = allkeys.sortedArray(using: #selector(NSNumber.compare(_:)))  as NSArray
                                 
                                 for index in (0 ..< array.count).reversed() {
                                     let key =  array.object(at: index)
                                     print (key)
-                                    self.results.add(self.sortArray.object(forKey: key))
+                                    self.results.add(self.sortArray.object(forKey: key) as Any)
                                 }
                               
                                 
@@ -375,11 +395,11 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
         
        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! SearchTableViewCell
         
-       var podcast:Podcast
-       podcast = self.results[(indexPath as NSIndexPath).row] as! Podcast
+       var podcast:NewPodcast
+       podcast = self.results[(indexPath as NSIndexPath).row] as! NewPodcast
        
         
-       let imageUrl:String  =  podcast.artworkUrl100
+       let imageUrl:String  =  podcast.artworkUrl100!
        
        cell.collectionLabel.text = podcast.collectionName
        cell.authorLabel.text = podcast.artistName!.uppercased()
@@ -389,6 +409,7 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
        cell.artwork.image = UIImage(named:"playicon")
        
        print(imageUrl)
+        /*
        let totalSeconds:Int = podcast.duration
        let seconds = totalSeconds % 60;
        var min = totalSeconds / 60
@@ -403,7 +424,7 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
         }
         
        cell.durationLabel.text = "\(hours):\(min):\(seconds)"
-        
+        */
         let trackCount:Int = podcast.trackCount as! Int
        cell.durationLabel.text = "\(trackCount) EPISODES"
        //cell.descriptionLabel.text = podcast.desc
@@ -461,27 +482,46 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
        
-        let podcast:Podcast = self.results[(indexPath as NSIndexPath).row] as! Podcast
+        let managedContext = CoreDataStackManager.sharedInstance().managedObjectContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MyShow")
+        fetchRequest.predicate = NSPredicate(format: "trackName = %@", "")
         
         
-         /*
-        let appDelegate:AppDelegate   = UIApplication.shared.delegate as! AppDelegate
-        
-        appDelegate.playerViewController?.podcast = podcast
-        
-        appDelegate.playerViewController?.episode = nil
-        
-        if(appDelegate.playerViewController?.player.rate != 1.0)
-        {
-            appDelegate.enterFullScreen()
-        }
-        else
-        {
-            appDelegate.exitFullScreen()
+        do {
             
+            let fetchResults = try managedContext.fetch(fetchRequest) as? [NSManagedObject]
+            
+            if fetchResults!.count != 0{
+                
+            }else{
+                
+                let entity = NSEntityDescription.insertNewObject(forEntityName: "MyShow", into: managedContext) as! MyShow
+                
+                let podcast:NewPodcast = self.results[(indexPath as NSIndexPath).row] as! NewPodcast
+                
+                
+                entity.setValue(podcast, forKey: "podcast")
+
+                
+             
+            }
         }
-        */
+        catch {
+            let fetchError = error as NSError
+            print(fetchError)
+        }
         
+        do {
+            
+            try
+                managedContext.save()
+            
+        } catch {
+            fatalError("Failure to save context: \(error)")
+        }
+        
+        /*
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "PlayerViewController") as! AAPLPlayerViewController
@@ -491,7 +531,7 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
         self.present(controller, animated: true, completion: nil)
         //self.navigationController!.pushViewController(controller, animated: true)
         
-        
+        */
     }
     
     // MARK: - Navigation
@@ -515,31 +555,18 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
                 print(podcast.artworkUrl100)
             }
         }
-        
-        
-        let appDelegate:AppDelegate   = UIApplication.shared.delegate as! AppDelegate
-        
-        appDelegate.playerViewController?.podcast = podcast
-        if(appDelegate.playerViewController?.player.rate != 1.0)
-        {
-            appDelegate.enterFullScreen()
-        }
-        else
-        {
-            appDelegate.exitFullScreen()
-            
-        }*/
+        */
     
         
     }
    
     @IBAction func about(_ sender: AnyObject) {
         
-        let podcast : Podcast = (self.results.object(at: sender.tag) as? Podcast)!
+        let podcast : NewPodcast = (self.results.object(at: sender.tag) as? NewPodcast)!
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "NotesViewController") as! NotesViewController
-        controller.subtitle = podcast.collectionName
-        controller.podcast = self.results.object(at: sender.tag) as? Podcast
+        controller.subtitle = podcast.collectionName!
+        controller.podcast = self.results.object(at: sender.tag) as? NewPodcast
         controller.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext //All objects and view are transparent
 
         self.present(controller, animated: false, completion: nil)
@@ -567,7 +594,19 @@ class SearchResultsViewController: BaseViewController,UITableViewDelegate,UITabl
 
    
     @IBAction func play(sender: AnyObject) {
-        let podcast:Podcast = self.results[sender.tag] as! Podcast
+        let podcast:NewPodcast = self.results[sender.tag] as! NewPodcast
+        
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "PlayerViewController") as! AAPLPlayerViewController
+        
+        controller.episode = nil
+        controller.podcast = podcast
+        self.present(controller, animated: true, completion: nil)
+    }
+    
+    func saveshow(sender: AnyObject) {
+        let podcast:NewPodcast = self.results[sender.tag] as! NewPodcast
         
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)

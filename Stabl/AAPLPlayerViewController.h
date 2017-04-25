@@ -14,7 +14,7 @@
 @import MediaPlayer;
 @import CoreMedia.CMTime;
 @class AAPLPlayerView;
-@class Podcast;
+@class NewPodcast;
 #import "BaseViewController.h"
 
 @interface AAPLPlayerViewController : BaseViewController
@@ -27,7 +27,7 @@
 @property (readonly) CMTime duration;
 @property float rate;
 
-@property (nonatomic, strong) Podcast *podcast;
+@property (nonatomic, strong) NewPodcast *podcast;
 @property (nonatomic, strong) NSDictionary *episode;
 @property (weak) IBOutlet UILabel *titleLabel;
 

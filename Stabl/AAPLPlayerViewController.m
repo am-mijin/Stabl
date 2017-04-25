@@ -81,22 +81,7 @@ static int AAPLPlayerViewControllerKVOContext = 0;
     
     //dispatch_async(globalConcurrentQueue, ^{
      //});
-    if ( self.showEpisodesViewController == nil) {
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        self.showEpisodesViewController = [storyboard instantiateViewControllerWithIdentifier:@"ShowEpisodesViewController"];
-        
-        self.showEpisodesViewController.podcast = _podcast;
-        
-        
-        [self.view addSubview:self.showEpisodesViewController.view];
-        
-        self.showEpisodesViewController.view.frame = CGRectMake( self.view.frame.size.width,
-                                                               0 ,
-                                                                self.view.frame.size.width,
-                                                                self.view.frame.size.height);
-
-    }
-    
+   
     
     
     
@@ -126,7 +111,7 @@ static int AAPLPlayerViewControllerKVOContext = 0;
         
     }else{
         
-        url = [NSURL URLWithString :[_podcast.enclosure objectForKey:@"url"]];
+        url = [NSURL URLWithString :_podcast.playUrl];
         //NSLog(@"url %@",url);
         
         _subtitleLabel.text = _podcast.title;
@@ -276,7 +261,23 @@ static int AAPLPlayerViewControllerKVOContext = 0;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidChange:) name:kPodecastNotification object:nil];
     
     [self initPlayer];
-    
+    /*
+    if ( self.showEpisodesViewController == nil) {
+       
+         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+         self.showEpisodesViewController = [storyboard instantiateViewControllerWithIdentifier:@"ShowEpisodesViewController"];
+         
+         self.showEpisodesViewController.podcast = _podcast;
+         
+         
+         [self.view addSubview:self.showEpisodesViewController.view];
+         
+         self.showEpisodesViewController.view.frame = CGRectMake( self.view.frame.size.width,
+         0 ,
+         self.view.frame.size.width,
+         self.view.frame.size.height);
+        
+    }*/
     
     
    // self.minimizedView.hidden = YES;
@@ -686,20 +687,27 @@ static int AAPLPlayerViewControllerKVOContext = 0;
 
 - (IBAction)showAllEpisodes:(id )sender {
     
+   
+  
+     if ( self.showEpisodesViewController == nil) {
+     
+     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+     self.showEpisodesViewController = [storyboard instantiateViewControllerWithIdentifier:@"ShowEpisodesViewController"];
+     
+     self.showEpisodesViewController.podcast = _podcast;
+     
+     
+     [self.view addSubview:self.showEpisodesViewController.view];
+     
+      
+     }
+     self.showEpisodesViewController.view.frame = CGRectMake( 0,
+                                                            0 ,
+                                                            self.view.frame.size.width,
+                                                            self.view.frame.size.height);
+    
+    
     /*
-    self.view.frame = CGRectMake(0,
-                                 self.view.frame.size.height -30 ,
-                                 self.view.frame.size.width,
-                                 self.view.frame.size.height);
-    
-    self.minimizedView.hidden = NO;
-    
-    NSDictionary* data = [NSDictionary dictionaryWithObject:_podcast forKey:@"podcast"];
-    [[NSNotificationCenter defaultCenter]postNotificationName:ShowAllEpisodesNotification object:@""
-                                                     userInfo: data];
-    */
-    
-    
     [UIView animateWithDuration:0.3
                      animations:^{
                          
@@ -710,7 +718,7 @@ static int AAPLPlayerViewControllerKVOContext = 0;
                                                       self.view.frame.size.height );
                      }completion:^(BOOL complete){
                          
-                     }];
+                     }];*/
     
 }
 

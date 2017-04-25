@@ -396,7 +396,7 @@ static NSUInteger const kImportSize = 300;
     NotesViewController *controller = (NotesViewController*)[self.storyboard instantiateViewControllerWithIdentifier:@"NotesViewController"];
     controller.modalPresentationStyle = UIModalPresentationOverFullScreen;
     
-    Podcast* podcast = self.podcast;
+    NewPodcast* podcast = self.podcast;
     NSDictionary* feed = [_feeds objectAtIndex:[sender tag]];
     NSString* desc = [feed objectForKey: @"description"];
     

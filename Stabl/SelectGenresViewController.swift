@@ -154,14 +154,14 @@ class SelectGenresViewController: UIViewController {
         }
         
        
-        self.dismiss(animated: false, completion: {
+        self.dismiss(animated: true, completion: {
         
             
         let appDelegate:AppDelegate   = UIApplication.shared.delegate as! AppDelegate
             
         appDelegate.save()})
         
-    }
+        }
     
 
 }

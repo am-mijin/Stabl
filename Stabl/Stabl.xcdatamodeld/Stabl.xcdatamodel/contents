@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15D21" minimumToolsVersion="Automatic">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="11759" systemVersion="16D32" minimumToolsVersion="Xcode 7.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="MyShow" representedClassName=".MyShow" syncable="YES">
+        <attribute name="trackName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="podcast" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NewPodcast" syncable="YES"/>
+    </entity>
     <entity name="NewPodcast" representedClassName=".NewPodcast" syncable="YES">
-        <attribute name="artistId" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="artistId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="artistName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="artistViewUrl" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="artworkUrl100" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="collectionId" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="collectionId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="collectionName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="collectionPrice" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="collectionViewUrl" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="currentTrack" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="duration" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="feedUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="playUrl" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="primaryGenreName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="releaseDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="trackCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="trackName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="NewPodcast" positionX="-63" positionY="-18" width="128" height="225"/>
+        <element name="MyShow" positionX="-324" positionY="36" width="128" height="75"/>
+        <element name="NewPodcast" positionX="-63" positionY="-18" width="128" height="328"/>
     </elements>
 </model>

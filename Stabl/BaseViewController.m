@@ -27,7 +27,7 @@
     
     [self.navigationController.navigationBar setTitleTextAttributes:    [NSDictionary dictionaryWithObjectsAndKeys:
                                                                         Top_Black, NSForegroundColorAttributeName,
-                                                                         [UIFont fontWithName:@"Dosis- SemiBold" size:23.0], NSFontAttributeName, nil]];
+                                                                         [UIFont fontWithName:@"Dosis-SemiBold" size:23.0], NSFontAttributeName, nil]];
     
     
 }

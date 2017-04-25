@@ -6,7 +6,7 @@
 //  Copyright © 2016 mijin. All rights reserved.
 //
 #import <UIKit/UIKit.h>
-#import "consts.h"
+#import "Consts.h"
 
 
 @interface BaseViewController : UIViewController
